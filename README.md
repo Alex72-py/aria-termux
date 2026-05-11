@@ -2,7 +2,7 @@
 
 > **Built for developers who use Termux as a real development environment on Android.**
 
-ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and intelligent safety checks.
+ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, [...]
 
 Unlike generic desktop-focused coding assistants, ARIA understands the unique constraints of Android-based development:
 
@@ -65,6 +65,7 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 ```bash
 pkg update && pkg upgrade -y
 pkg install python git -y
+pkg install termux-api -y
 
 git clone https://github.com/Alex72-py/aria-termux.git
 cd aria-termux
@@ -73,6 +74,8 @@ pip install -r requirements.txt
 
 python run_aria.py
 ```
+
+> **Note:** `termux-api` is required for clipboard integration to work properly. If not installed, ARIA will gracefully fall back to displaying commands without auto-copying.
 
 ---
 
