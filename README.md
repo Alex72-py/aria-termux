@@ -18,6 +18,7 @@
 - [About](#about)
 - [✨ Features](#-features)
 - [📸 Screenshots](#-screenshots)
+- [🎬 Demo](#-demo)
 - [🚀 Quick Start](#-quick-start)
 - [🔑 First Run](#-first-run)
 - [📖 Usage](#-usage)
@@ -35,7 +36,7 @@
 
 ## About
 
-ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and intelligent safety layers.
+ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and[...]
 
 ### Why ARIA?
 
@@ -135,6 +136,28 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 <img width="1079" height="2162" alt="Error Analysis" src="https://github.com/user-attachments/assets/a216a5a2-9897-4e68-90ed-94dfe55bae00" />
 
 </details>
+
+---
+
+## 🎬 Demo
+
+<div align="center">
+
+### Interactive Walkthrough
+
+> **Add your GIF here!** Replace the placeholder below with a demo GIF showing ARIA in action.
+
+```
+[Demo GIF coming soon - showing /ask command, error fixing workflow, and model switching]
+```
+
+Or embed directly:
+
+![ARIA Demo](your-demo-gif-url-here)
+
+**Video Tour:** Coming soon on YouTube
+
+</div>
 
 ---
 
