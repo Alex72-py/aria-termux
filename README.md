@@ -141,23 +141,11 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 
 ## 🎬 Demo
 
-<div align="center">
 
-### Interactive Walkthrough
 
-> **Add your GIF here!** Replace the placeholder below with a demo GIF showing ARIA in action.
+https://github.com/user-attachments/assets/0bdec9c0-fd24-4844-8c09-aea0cd376e34
 
-```
-[Demo GIF coming soon - showing /ask command, error fixing workflow, and model switching]
-```
 
-Or embed directly:
-
-![ARIA Demo](your-demo-gif-url-here)
-
-**Video Tour:** Coming soon on YouTube
-
-</div>
 
 ---
 
