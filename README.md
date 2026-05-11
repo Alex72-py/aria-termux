@@ -45,13 +45,16 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 
 ## 📸 Screenshots
 
-![Startup]<img width="1080" height="1739" alt="Screenshot_2026-05-11-13-22-33-69_84d3000e3f4017145260f7618db1d683" src="https://github.com/user-attachments/assets/72ccd238-74a9-4dd0-8e2c-97c00ec17584" />
+### Startup Interface
+<img width="1080" height="1739" alt="Screenshot_2026-05-11-13-22-33-69_84d3000e3f4017145260f7618db1d683" src="https://github.com/user-attachments/assets/72ccd238-74a9-4dd0-8e2c-97c00ec17584" />
 
 
-![Models]<img width="1080" height="2157" alt="IMG_20260511_133500" src="https://github.com/user-attachments/assets/8f8a4674-ba89-4204-8f99-f54bbca52833" />
+### Model Selection
+<img width="1080" height="2157" alt="IMG_20260511_133500" src="https://github.com/user-attachments/assets/8f8a4674-ba89-4204-8f99-f54bbca52833" />
 
 
-![Fix]<img width="1079" height="2162" alt="IMG_20260511_133512" src="https://github.com/user-attachments/assets/a216a5a2-9897-4e68-90ed-94dfe55bae00" />
+### Error Analysis
+<img width="1079" height="2162" alt="IMG_20260511_133512" src="https://github.com/user-attachments/assets/a216a5a2-9897-4e68-90ed-94dfe55bae00" />
 
 ---
 
