@@ -5,7 +5,7 @@
 ## 🎯 Key Features
 
 - **Slash Command Interface**: Claude Code-style commands (`/ask`, `/fix`, `/watch`) instead of positional arguments
-- **Watch Mode**: Ambient monitoring that auto-detects and fixes shell errors in real-time
+- **Watch Mode**: Ambient monitoring that auto-detects and fixes shell errors in real-time (⚠️ Still In Development!)
 - **Self-Healing API**: Automatically detects wrong models, fetches available ones, and retries gracefully
 - **Guardian Safety Layer**: Risk scoring and user confirmation for dangerous operations
 - **Rich Terminal UI**: Cinematic boot sequence, animations, syntax highlighting, and beautiful output
@@ -23,14 +23,14 @@ pkg update && pkg upgrade
 pkg install python git
 
 # Clone repository
-git clone https://github.com/yourusername/aria-agent.git
+git clone https://github.com/Alex72-py/aria-termux.git
 cd aria-agent
 
 # Install ARIA
 pip install -e .
 
 # Run ARIA
-aria
+python run_aria.py
 ```
 
 ### First Run
@@ -80,7 +80,7 @@ Enable Guardian safety mode? [y/n]: y
 ### Watch Mode
 
 Watch mode monitors your shell output and automatically detects errors:
-
+(In Development!)
 ```bash
 aria> /watch
 👁️  Watch mode enabled. Monitoring shell for errors...
