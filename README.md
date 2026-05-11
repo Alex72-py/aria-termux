@@ -1,287 +1,498 @@
-# ARIA — AI Terminal Co-Pilot for Termux
+<div align="center">
+
+# 🚀 ARIA — AI Terminal Co-Pilot for Termux
+
+[![Python](https://img.shields.io/badge/Python-89%25-3776ab?logo=python&logoColor=white)](https://python.org)
+[![Shell](https://img.shields.io/badge/Shell-11%25-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Google Gemma 4](https://img.shields.io/badge/Google%20Gemma-4-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
 
 > **Built for developers who use Termux as a real development environment on Android.**
 
-ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, [...]
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [About](#about)
+- [✨ Features](#-features)
+- [📸 Screenshots](#-screenshots)
+- [🚀 Quick Start](#-quick-start)
+- [🔑 First Run](#-first-run)
+- [📖 Usage](#-usage)
+- [🏗️ Architecture](#-architecture)
+- [🧠 Knowledge Base](#-knowledge-base)
+- [🛡️ Safety Features](#-safety-features)
+- [📊 Supported Models](#-supported-models)
+- [⚙️ Configuration](#-configuration)
+- [🧪 Testing](#-testing)
+- [⚠️ Limitations](#-limitations)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+---
+
+## About
+
+ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and intelligent safety layers.
+
+### Why ARIA?
 
 Unlike generic desktop-focused coding assistants, ARIA understands the unique constraints of Android-based development:
 
-- Clang instead of GCC
-- Android filesystem quirks
-- Proot/container environments
-- Mobile-only workflows
-- Package and permission limitations
-- Termux-specific debugging patterns
+<table>
+<tr>
+<td>
+
+⚙️ **Clang** instead of GCC  
+🗂️ **Android filesystem quirks**  
+🔒 **Proot/container environments**  
+
+</td>
+<td>
+
+📱 **Mobile-only workflows**  
+🚫 **Package and permission limitations**  
+🐛 **Termux-specific debugging patterns**  
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## ✨ Features
 
-- **Slash Command Interface**
-  Claude Code-style workflows using commands like `/ask`, `/fix`, `/models`, and `/watch`.
+<table>
+<tr>
+<td>
 
-- **Model Discovery & Selection**
-  Automatically fetches available Gemma models and allows dynamic model switching directly inside the terminal.
+### 💻 Advanced Terminal UI
+- Slash Command Interface (`/ask`, `/fix`, `/models`, `/watch`)
+- Rich syntax highlighting & formatting
+- Animated startup sequences
+- Color-coded output
 
-- **Self-Healing API Layer**
-  Detects invalid models, retries requests gracefully, and falls back safely when API issues occur.
+</td>
+<td>
 
-- **Guardian Safety Layer**
-  Risk scoring and confirmation prompts for dangerous shell operations.
+### 🤖 Intelligent AI
+- Dynamic Gemma model discovery
+- Auto model switching
+- Self-healing API layer
+- Graceful fallback handling
 
-- **Rich Terminal UI**
-  Animated startup sequence, syntax highlighting, spinners, formatted panels, and color-coded output.
+</td>
+</tr>
+<tr>
+<td>
 
-- **Offline Knowledge Base**
-  Built-in Termux troubleshooting knowledge covering package management, common errors, proot-distro, Python environments, and Android bridge tools.
+### 🛡️ Safety First
+- Risk scoring system
+- Confirmation prompts for dangerous operations
+- Guardian safety layer
+- Multi-level command validation
 
-- **Clipboard Integration**
-  Copies generated commands directly to clipboard for faster terminal workflows.
+</td>
+<td>
 
-- **Experimental Watch Mode**
-  Monitors shell output and attempts to detect common errors automatically.
+### 📚 Knowledge Base
+- Common Termux errors
+- Package management tips
+- Python environments
+- Proot-distro setup
+- Android bridge tools
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+### 📋 Additional Features
+- **Clipboard Integration**: Copy commands with one keystroke  
+- **Watch Mode**: Auto-detect and analyze terminal errors  
+- **Offline Support**: Works without internet for KB queries  
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 📸 Screenshots
 
-### Startup Interface
-<img width="1080" height="1739" alt="Screenshot_2026-05-11-13-22-33-69_84d3000e3f4017145260f7618db1d683" src="https://github.com/user-attachments/assets/72ccd238-74a9-4dd0-8e2c-97c00ec17584" />
+<details>
+<summary><b>📱 Click to expand screenshot gallery</b></summary>
 
+### Startup Interface
+<img width="1080" height="1739" alt="Startup Screen" src="https://github.com/user-attachments/assets/72ccd238-74a9-4dd0-8e2c-97c00ec17584" />
 
 ### Model Selection
-<img width="1080" height="2157" alt="IMG_20260511_133500" src="https://github.com/user-attachments/assets/8f8a4674-ba89-4204-8f99-f54bbca52833" />
-
+<img width="1080" height="2157" alt="Model Selection" src="https://github.com/user-attachments/assets/8f8a4674-ba89-4204-8f99-f54bbca52833" />
 
 ### Error Analysis
-<img width="1079" height="2162" alt="IMG_20260511_133512" src="https://github.com/user-attachments/assets/a216a5a2-9897-4e68-90ed-94dfe55bae00" />
+<img width="1079" height="2162" alt="Error Analysis" src="https://github.com/user-attachments/assets/a216a5a2-9897-4e68-90ed-94dfe55bae00" />
+
+</details>
 
 ---
 
 ## 🚀 Quick Start
 
-### Installation (Termux)
+### Prerequisites
+- Termux app on Android
+- Python 3.8+
+- Internet connection (for AI features)
+
+### Installation
 
 ```bash
+# Update system packages
 pkg update && pkg upgrade -y
+
+# Install required tools
 pkg install python git -y
 pkg install termux-api -y
 
+# Clone and install ARIA
 git clone https://github.com/Alex72-py/aria-termux.git
 cd aria-termux
 
+# Install Python dependencies
 pip install -r requirements.txt
 
+# Launch ARIA
 python run_aria.py
 ```
 
-> **Note:** `termux-api` is required for clipboard integration to work properly. If not installed, ARIA will gracefully fall back to displaying commands without auto-copying.
+> 💡 **Tip:** `termux-api` is optional but recommended for clipboard integration. ARIA will gracefully fall back without it.
 
 ---
 
 ## 🔑 First Run
 
-ARIA launches a configuration wizard on first startup:
+ARIA launches an interactive configuration wizard on first startup:
 
 ```
-Welcome to ARIA Configuration Wizard
+╔══════════════════════════════════════════╗
+║  Welcome to ARIA Configuration Wizard    ║
+╚══════════════════════════════════════════╝
 
-Enter Google AI Studio API key:
-Enter preferred model:
-Enable Guardian mode? [y/n]:
-Enable watch mode? [y/n]:
+Enter Google AI Studio API key: ••••••••••••••
+Enter preferred model: gemma-4-31b-it
+Enable Guardian mode? [y/n]: y
+Enable watch mode? [y/n]: n
 ```
 
-Get a free API key from Google AI Studio:
-https://aistudio.google.com/app/apikey
+**Get your free API key here:**  
+🔗 [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ---
 
 ## 📖 Usage
 
-**Ask Questions**
-```
-/ask How do I install Python on Termux?
-```
+### Command Reference
 
-**Fix Errors**
-```
-/fix "clang: error: linker command failed"
-```
-
-**List Available Models**
-```
-/models
-```
-
-**Search Knowledge Base**
-```
-/kb python module not found
-```
-
-**Enable Watch Mode**
-```
-/watch
-```
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td><code>/ask</code></td>
+<td>Ask ARIA any question about Termux or development</td>
+<td><code>/ask How do I install Python on Termux?</code></td>
+</tr>
+<tr>
+<td><code>/fix</code></td>
+<td>Analyze and fix terminal errors</td>
+<td><code>/fix "clang: error: linker command failed"</code></td>
+</tr>
+<tr>
+<td><code>/models</code></td>
+<td>List all available Gemma models</td>
+<td><code>/models</code></td>
+</tr>
+<tr>
+<td><code>/kb</code></td>
+<td>Search the offline knowledge base</td>
+<td><code>/kb python module not found</code></td>
+</tr>
+<tr>
+<td><code>/watch</code></td>
+<td>Enable automatic error detection</td>
+<td><code>/watch</code></td>
+</tr>
+</table>
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-ARIA Core
-├── Command System
-├── API Client
-│   ├── Auto Model Discovery
-│   ├── Retry Logic
-│   └── Fallback Handling
-├── Guardian Safety Layer
-├── Watch Mode
-├── Offline Knowledge Base
-└── Rich Terminal UI
+┌─────────────────────────────────────────┐
+│           ARIA Core System              │
+├─────────────────────────────────────────┤
+│  📋 Command System                      │
+│  ├─ /ask, /fix, /models, /kb, /watch   │
+│                                         │
+│  🤖 API Client                          │
+│  ├─ Auto Model Discovery                │
+│  ├─ Intelligent Retry Logic             │
+│  └─ Fallback Handling                   │
+│                                         │
+│  🛡️ Guardian Safety Layer               │
+│  ├─ Risk Assessment                     │
+│  └─ Confirmation Prompts                │
+│                                         │
+│  👀 Watch Mode                          │
+│  ├─ Error Detection                     │
+│  └─ Auto Analysis                       │
+│                                         │
+│  📚 Offline Knowledge Base              │
+│  └─ Termux Troubleshooting              │
+│                                         │
+│  🎨 Rich Terminal UI                    │
+│  ├─ Syntax Highlighting                 │
+│  ├─ Animations                          │
+│  └─ Color-Coded Output                  │
+└─────────────────────────────────────────┘
 ```
 
 ---
 
-## 🧠 Knowledge Base Categories
+## 🧠 Knowledge Base
 
-- Common Termux Errors
-- Package Management
-- Python & Virtual Environments
-- Proot-Distro
-- Android Bridge Tools
-- Git & SSH
-- Networking & Ports
+ARIA includes comprehensive offline knowledge covering:
+
+| Category | Topics |
+|----------|--------|
+| 🐛 **Common Errors** | Package conflicts, permission issues, build errors |
+| 📦 **Package Management** | pkg, apt, pip installation & troubleshooting |
+| 🐍 **Python** | Virtual environments, venv, pip caching |
+| 🐧 **Proot-Distro** | Linux distributions, container setup |
+| 🔌 **Android Bridge** | Termux:API, Tasker integration, system access |
+| 🔐 **Git & SSH** | SSH keys, Git configuration, GitHub access |
+| 🌐 **Networking** | Port forwarding, localhost, DNS issues |
 
 ---
 
-## 🛡️ Guardian Safety Layer
+## 🛡️ Safety Features
 
-ARIA analyzes potentially dangerous commands before execution.
+### Guardian Safety Layer
 
-### Risk Levels
+ARIA analyzes potentially dangerous commands before execution with a comprehensive risk assessment system:
 
-| Level | Description |
-|-------|-------------|
-| Low | Safe operations |
-| Medium | Network/code operations |
-| High | User/system modifications |
-| Critical | Recursive deletion or destructive commands |
-
-High-risk operations require explicit confirmation.
+<table>
+<tr>
+<th>Risk Level</th>
+<th>Color</th>
+<th>Description</th>
+<th>Action</th>
+</tr>
+<tr>
+<td>🟢 Low</td>
+<td>Green</td>
+<td>Safe operations (listing, viewing)</td>
+<td>Execute immediately</td>
+</tr>
+<tr>
+<td>🟡 Medium</td>
+<td>Yellow</td>
+<td>Network/code operations</td>
+<td>Execute with notice</td>
+</tr>
+<tr>
+<td>🟠 High</td>
+<td>Orange</td>
+<td>User/system modifications</td>
+<td>Require confirmation</td>
+</tr>
+<tr>
+<td>🔴 Critical</td>
+<td>Red</td>
+<td>Recursive deletion, destructive commands</td>
+<td>Require explicit approval</td>
+</tr>
+</table>
 
 ---
 
 ## 📊 Supported Models
 
-ARIA supports Google Gemma models through Google AI Studio.
+ARIA supports the full lineup of Google Gemma 4 models:
 
-Examples include:
+```
+Gemma 4 Model Family
+├── gemma-4-2b-it      (Lightweight, 2B parameters)
+├── gemma-4-4b-it      (Balanced, 4B parameters)
+├── gemma-4-26b-a4b-it (Advanced, 26B parameters)
+└── gemma-4-31b-it     (Expert, 31B parameters)
+```
 
-- `gemma-4-2b-it`
-- `gemma-4-4b-it`
-- `gemma-4-26b-a4b-it`
-- `gemma-4-31b-it`
+**Auto-discovery:** ARIA fetches available models from your API key automatically.
 
 ---
 
 ## ⚙️ Configuration
 
-Configuration is stored locally:
+### Config File
 
+Configuration is stored locally in:
 ```
 ~/.aria/config.json
 ```
 
-Environment variable overrides:
-
+Example structure:
+```json
+{
+  "api_key": "your-google-ai-studio-key",
+  "model": "gemma-4-31b-it",
+  "guardian_mode": true,
+  "watch_mode": false
+}
 ```
-ARIA_API_KEY
-ARIA_MODEL
+
+### Environment Variables
+
+Override config with environment variables:
+
+```bash
+export ARIA_API_KEY="your-key"
+export ARIA_MODEL="gemma-4-31b-it"
+export ARIA_GUARDIAN_MODE="true"
 ```
 
 ---
 
 ## 🧪 Testing
 
+Run the test suite with pytest:
+
 ```bash
+# Run all tests
 python -m pytest tests/
+
+# Run with verbose output
+python -m pytest tests/ -v
+
+# Run specific test file
+python -m pytest tests/test_api.py
 ```
 
 ---
 
-## ⚠️ Current Limitations
+## ⚠️ Limitations
 
-- Watch mode is experimental
-- Internet connection required for AI features
-- Optimized primarily for Termux on Android
-- Some auto-fix suggestions require manual review
+> **Development Status:** This is a hackathon submission. These limitations are planned for future releases.
+
+- 🔄 Watch mode is experimental and may require manual review
+- 🌐 Internet connection required for AI features (knowledge base works offline)
+- 📱 Optimized primarily for Termux on Android
+- 🤔 Some auto-fix suggestions require manual verification
+- 📊 Transparent reasoning output shows intermediate model thinking
 
 ---
 
-## 🧠 Transparent Reasoning Output
+## 🧠 Transparent Reasoning
 
-ARIA currently exposes portions of its intermediate reasoning and response planning during some operations.
+ARIA intentionally exposes intermediate reasoning during operations. This helps:
 
-This behavior is intentional for the current development phase and helps:
+✅ Debug prompt and model behavior  
+✅ Inspect reasoning quality  
+✅ Improve transparency during testing  
+✅ Analyze response generation in real time  
 
-- Debug prompt and model behavior
-- Inspect reasoning quality
-- Improve transparency during testing
-- Analyze response generation in real time
-
-Future releases will introduce:
-
+**Future releases** will include:
 - Optional hidden reasoning mode
 - Cleaner response streaming
 - User-configurable verbosity levels
 - Dedicated developer/debug modes
 
-For the hackathon version, transparent reasoning is kept enabled to prioritize observability and rapid iteration.
-
 ---
 
 ## 📦 Dependencies
 
-- `google-generativeai`
-- `rich`
-- `click`
-- `pydantic`
-- `python-dotenv`
+| Package | Purpose |
+|---------|---------|
+| `google-generativeai` | Google Gemma API client |
+| `rich` | Rich terminal formatting & UI |
+| `click` | CLI command interface |
+| `pydantic` | Data validation & models |
+| `python-dotenv` | Environment variable management |
+
+See `requirements.txt` for versions and additional dependencies.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, improvements, and issue reports are welcome.
+We welcome contributions! Here's how to get started:
 
 ```bash
+# Create a feature branch
 git checkout -b feature/my-feature
+
+# Make your changes and commit
+git add .
+git commit -m "Add my feature"
+
+# Push and create a pull request
+git push origin feature/my-feature
 ```
+
+**Guidelines:**
+- Follow PEP 8 for Python code
+- Add tests for new features
+- Update documentation
+- Keep commits focused and descriptive
 
 ---
 
 ## 📄 License
 
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+```
 MIT License
+
+Copyright (c) 2026 Alex72-py
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
 
 ---
 
 ## 🎯 Hackathon Submission
 
-Submitted for the Google Gemma 4 Challenge.
+**Submitted for:** Google Gemma 4 Challenge
 
-### Highlights:
+### 🏆 Highlights
 
-- Real-world Termux developer workflow focus
-- Dynamic model discovery and switching
-- Self-healing API behavior
-- Mobile-first terminal UX
-- Offline fallback support
-- Safety-focused command execution
+- 🎯 **Real-world Focus**: Actual Termux developer workflow optimization
+- 🔄 **Dynamic Discovery**: Auto-detect and switch between available models
+- 🛡️ **Resilient API**: Self-healing with intelligent retry logic
+- 📱 **Mobile-First**: Terminal UI optimized for small screens
+- 💾 **Offline Ready**: Fallback support without internet connection
+- 🔐 **Safety-Conscious**: Risk assessment before executing commands
 
 ---
 
-**🚀 ARIA**
+<div align="center">
+
+### 🚀 ARIA
 
 *Making Android terminal development faster, safer, and more usable.*
+
+**[⬆ back to top](#-aria--ai-terminal-co-pilot-for-termux)**
+
+[![Stars](https://img.shields.io/github/stars/Alex72-py/aria-termux?style=social)](https://github.com/Alex72-py/aria-termux)
+[![GitHub](https://img.shields.io/badge/GitHub-Alex72--py-181717?logo=github)](https://github.com/Alex72-py)
+
+</div>
