@@ -36,7 +36,14 @@
 
 ## About
 
-ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and[...]
+ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and intelligent safety features to accelerate development on mobile devices.
+
+**Key Capabilities:**
+- 🤖 Intelligent code analysis and command fixing
+- 🛡️ Guardian safety layer for command validation
+- 📚 Offline knowledge base for Termux troubleshooting
+- 👀 Watch mode for automatic error detection
+- 💻 Rich terminal UI with syntax highlighting
 
 ### Why ARIA?
 
