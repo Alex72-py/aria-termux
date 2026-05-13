@@ -6,10 +6,10 @@ How it works:
   failed command to ~/.aria/last_fail.json immediately after it exits.
 - WatchMode.check_and_notify() is called before each ARIA prompt (non-blocking).
   If a new failure exists, it shows a notification panel and prompts to /fix.
-- The user can also just type /fix at any time — it reads the same file.
+- Just type /fix at any time — it reads the same file.
 
 Why this design (vs blocking subprocess-wrapper watch):
-- Works across two terminal sessions: user works normally, ARIA notices failures.
+- Works across two terminal sessions: normal shell work + ARIA noticing failures.
 - No blocking. No PTY hijacking. No subprocess gymnastics.
 - Works with proot-distro too.
 """
@@ -38,7 +38,7 @@ class WatchMode:
         self.kb = kb
         self.enabled = False
         self._api_client: Optional["APIClient"] = None
-        self._last_seen_cmd: str = ""  # deduplicate notifications
+        self._last_seen_cmd: str = ""  # avoid double notifications
 
     # ── Toggle ────────────────────────────────────────────────────
 
@@ -203,4 +203,3 @@ class WatchMode:
         if analysis.get("auto_fixable"):
             lines.append(f"\n🔧 Auto-fix: {analysis['fix_command']}")
         return "\n".join(lines)
-
