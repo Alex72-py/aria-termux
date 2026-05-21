@@ -11,6 +11,11 @@ __version__ = "1.0.0"
 __author__ = "ARIA Development Team"
 __license__ = "MIT"
 
-from .main import ARIA
-
 __all__ = ["ARIA"]
+
+
+def __getattr__(name):
+    if name == "ARIA":
+        from .main import ARIA
+        return ARIA
+    raise AttributeError(name)

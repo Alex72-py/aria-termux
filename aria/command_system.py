@@ -95,12 +95,13 @@ class CommandSystem:
             "raw_input": user_input,
         }
     
-    def execute(self, parsed_command: Dict[str, Any]) -> str:
+    def execute(self, parsed_command: Dict[str, Any], status_handler: Any = None) -> str:
         """
         Execute a parsed command.
         
         Args:
             parsed_command: Parsed command dictionary
+            status_handler: Optional UI status handler for dynamic updates
             
         Returns:
             Command output
@@ -121,8 +122,13 @@ class CommandSystem:
             # Add to history
             self.command_history.append(parsed_command["raw_input"])
             
-            # Execute handler
-            result = command.handler(args)
+            # Execute handler (pass status_handler if provided)
+            try:
+                result = command.handler(args, status_handler=status_handler)
+            except TypeError:
+                # Fallback for handlers that don't accept status_handler
+                result = command.handler(args)
+                
             logger.info(f"Command executed: /{command_name}")
             return result
         except Exception as e:
@@ -136,26 +142,26 @@ class CommandSystem:
         Returns:
             Formatted help text
         """
-        lines = ["🤖 ARIA Commands:\n"]
-        
-        # Track already displayed commands (to avoid duplicates from aliases)
-        displayed = set()
-        
-        for command_name, command in self.commands.items():
-            if command_name in displayed:
+        lines = ["# ARIA Commands", "", "Use `/help` anytime. Bare text is treated as `/ask`.", ""]
+        seen = set()
+        ordered = sorted(self.commands.values(), key=lambda c: c.name)
+        for command in ordered:
+            if command.name in seen:
                 continue
-            
-            displayed.add(command_name)
-            
-            # Format command with aliases
-            cmd_str = f"/{command.name}"
-            if command.aliases:
-                cmd_str += f" (aliases: {', '.join(command.aliases)})"
-            
-            lines.append(f"  {cmd_str}")
-            lines.append(f"    {command.description}")
-            lines.append("")
-        
+            seen.add(command.name)
+            suffix = " <args>" if command.requires_args else ""
+            lines.append(f"- [bold]/{command.name}{suffix}[/bold]  {command.description}")
+        lines.extend([
+            "",
+            "## Quick Start",
+            "",
+            "- [bold]/provider list[/bold]  inspect configured providers",
+            "- [bold]/provider openrouter[/bold]  switch providers directly",
+            "- [bold]/provider cycle[/bold]  rotate through saved providers",
+            "- [bold]/model list[/bold]  browse models for the active provider",
+            "- [bold]/ask <question>[/bold]  send a direct model prompt",
+            "- [bold]/fix[/bold]  diagnose the latest failure",
+        ])
         return "\n".join(lines)
     
     def get_command(self, name: str) -> Optional[Command]:

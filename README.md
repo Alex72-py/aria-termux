@@ -17,6 +17,7 @@
 
 - [About](#about)
 - [✨ Features](#-features)
+- [🆕 Recent Improvements](#-recent-improvements)
 - [📸 Screenshots](#-screenshots)
 - [🎬 Demo](#-demo)
 - [🚀 Quick Start](#-quick-start)
@@ -77,7 +78,8 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 <td>
 
 ### 💻 Advanced Terminal UI
-- Slash Command Interface (`/ask`, `/fix`, `/models`, `/watch`)
+- Startup dashboard with visible slash commands
+- Slash Command Interface (`/ask`, `/fix`, `/provider`, `/model`, `/watch`)
 - Rich syntax highlighting & formatting
 - Animated startup sequences
 - Color-coded output
@@ -86,7 +88,8 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 <td>
 
 ### 🤖 Intelligent AI
-- Dynamic Gemma model discovery
+- Multi-provider model access
+- Dynamic model discovery
 - Auto model switching
 - Self-healing API layer
 - Graceful fallback handling
@@ -125,6 +128,16 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 </td>
 </tr>
 </table>
+
+---
+
+## 🆕 Recent Improvements
+
+- **Better startup UX**: ARIA now opens with a session dashboard that shows the active provider, model, safety state, watch state, and the most useful slash commands immediately.
+- **Faster provider switching**: You can now switch directly with `/provider google`, `/provider openrouter`, or `/provider nvidia_nim` without going back through the full config wizard.
+- **Provider rotation**: `/provider cycle` jumps to the next configured provider, which is useful when comparing output or working around a provider issue.
+- **Key management from the prompt**: `/provider key <name>` updates or saves a provider key inline.
+- **Cleaner help output**: `/help`, `/provider list`, and `/model list` now read like a control surface instead of raw debug text.
 
 ---
 
@@ -197,18 +210,29 @@ ARIA launches an interactive configuration wizard on first startup:
 ║  Welcome to ARIA Configuration Wizard    ║
 ╚══════════════════════════════════════════╝
 
-Enter Google AI Studio API key: ••••••••••••••
-Enter preferred model: gemma-4-31b-it
+Choose provider [google/openrouter/nvidia_nim]: google
+Enter API key for provider: ••••••••••••••
+Enter preferred model: gemma-4-26b-a4b-it
 Enable Guardian mode? [y/n]: y
-Enable watch mode? [y/n]: n
 ```
 
-**Get your free API key here:**  
+**Get your free Google API key here:**  
 🔗 [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ---
 
 ## 📖 Usage
+
+### Startup Experience
+
+After setup, ARIA shows:
+
+- the active provider and model
+- guardian and watch status
+- a visible slash-command panel
+- quick provider-switch shortcuts
+
+Bare text is treated as `/ask`, so you can either type a command or just start talking to the model.
 
 ### Command Reference
 
@@ -225,8 +249,18 @@ Enable watch mode? [y/n]: n
 <td><code>/fix "clang: error: linker command failed"</code></td>
 </tr>
 <tr>
+<td><code>/provider</code></td>
+<td>Inspect or switch model providers</td>
+<td><code>/provider openrouter</code></td>
+</tr>
+<tr>
+<td><code>/model</code></td>
+<td>Inspect or switch the active model</td>
+<td><code>/model set google/gemma-3n-e4b-it</code></td>
+</tr>
+<tr>
 <td><code>/models</code></td>
-<td>List all available Gemma models</td>
+<td>List models for the current provider</td>
 <td><code>/models</code></td>
 </tr>
 <tr>
@@ -239,7 +273,26 @@ Enable watch mode? [y/n]: n
 <td>Enable automatic error detection</td>
 <td><code>/watch</code></td>
 </tr>
+<tr>
+<td><code>/status</code></td>
+<td>Show active provider, model, and safety state</td>
+<td><code>/status</code></td>
+</tr>
 </table>
+
+### Provider Switching
+
+Common flows:
+
+```bash
+/provider list
+/provider google
+/provider openrouter
+/provider nvidia_nim
+/provider cycle
+/provider key openrouter
+/model list
+```
 
 ---
 
@@ -250,9 +303,11 @@ Enable watch mode? [y/n]: n
 │           ARIA Core System              │
 ├─────────────────────────────────────────┤
 │  📋 Command System                      │
-│  ├─ /ask, /fix, /models, /kb, /watch   │
+│  ├─ /ask, /fix, /provider, /model      │
+│  ├─ /models, /kb, /watch, /status      │
 │                                         │
 │  🤖 API Client                          │
+│  ├─ Multi-Provider Routing              │
 │  ├─ Auto Model Discovery                │
 │  ├─ Intelligent Retry Logic             │
 │  └─ Fallback Handling                   │
@@ -336,7 +391,15 @@ ARIA analyzes potentially dangerous commands before execution with a comprehensi
 
 ## 📊 Supported Models
 
-ARIA supports the full lineup of Google Gemma 4 models:
+ARIA supports multiple providers:
+
+| Provider | Notes |
+|----------|-------|
+| `google` | Google AI Studio / Gemma access |
+| `openrouter` | OpenAI-compatible multi-model routing |
+| `nvidia_nim` | NVIDIA hosted model endpoints |
+
+Example Google Gemma family:
 
 ```
 Gemma 4 Model Family
@@ -346,7 +409,7 @@ Gemma 4 Model Family
 └── gemma-4-31b-it     (Expert, 31B parameters)
 ```
 
-**Auto-discovery:** ARIA fetches available models from your API key automatically.
+**Auto-discovery:** ARIA fetches available models from the active provider automatically.
 
 ---
 
@@ -362,10 +425,17 @@ Configuration is stored locally in:
 Example structure:
 ```json
 {
-  "api_key": "your-google-ai-studio-key",
-  "model": "gemma-4-31b-it",
+  "provider": "google",
+  "api_key": "active-provider-key",
+  "api_keys": {
+    "google": "your-google-ai-studio-key",
+    "openrouter": "your-openrouter-key",
+    "nvidia_nim": "your-nvidia-key"
+  },
+  "model": "gemma-4-26b-a4b-it",
   "guardian_mode": true,
-  "watch_mode": false
+  "watch_mode": false,
+  "max_tokens": 8192
 }
 ```
 
@@ -375,8 +445,11 @@ Override config with environment variables:
 
 ```bash
 export ARIA_API_KEY="your-key"
+export ARIA_PROVIDER="openrouter"
 export ARIA_MODEL="gemma-4-31b-it"
-export ARIA_GUARDIAN_MODE="true"
+export GOOGLE_API_KEY="your-google-key"
+export OPENROUTER_API_KEY="your-openrouter-key"
+export NVIDIA_NIM_API_KEY="your-nvidia-key"
 ```
 
 ---
@@ -387,13 +460,13 @@ Run the test suite with pytest:
 
 ```bash
 # Run all tests
-python -m pytest tests/
+pytest -q
 
 # Run with verbose output
-python -m pytest tests/ -v
+pytest -v
 
-# Run specific test file
-python -m pytest tests/test_api.py
+# Run one test file
+pytest tests/test_watch_mode.py -q
 ```
 
 ---
@@ -406,24 +479,6 @@ python -m pytest tests/test_api.py
 - 🌐 Internet connection required for AI features (knowledge base works offline)
 - 📱 Optimized primarily for Termux on Android
 - 🤔 Some auto-fix suggestions require manual verification
-- 📊 Transparent reasoning output shows intermediate model thinking
-
----
-
-## 🧠 Transparent Reasoning
-
-ARIA intentionally exposes intermediate reasoning during operations. This helps:
-
-✅ Debug prompt and model behavior  
-✅ Inspect reasoning quality  
-✅ Improve transparency during testing  
-✅ Analyze response generation in real time  
-
-**Future releases** will include:
-- Optional hidden reasoning mode
-- Cleaner response streaming
-- User-configurable verbosity levels
-- Dedicated developer/debug modes
 
 ---
 
@@ -431,7 +486,7 @@ ARIA intentionally exposes intermediate reasoning during operations. This helps:
 
 | Package | Purpose |
 |---------|---------|
-| `google-generativeai` | Google Gemma API client |
+| `google-generativeai` | Google provider support |
 | `rich` | Rich terminal formatting & UI |
 | `click` | CLI command interface |
 | `pydantic` | Data validation & models |
@@ -512,5 +567,5 @@ copies or substantial portions of the Software.
 
 [![Stars](https://img.shields.io/github/stars/Alex72-py/aria-termux?style=social)](https://github.com/Alex72-py/aria-termux)
 [![GitHub](https://img.shields.io/badge/GitHub-Alex72--py-181717?logo=github)](https://github.com/Alex72-py)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Alex72-py/aria-termux)
+
 </div>

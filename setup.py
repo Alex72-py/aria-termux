@@ -15,7 +15,7 @@ setup(
     description="Terminal-native AI co-pilot for Termux/Android development",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/your-username/aria-agent",
+    url="https://github.com/Alex72-py/aria-termux",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -35,13 +35,10 @@ setup(
     install_requires=[
         "google-generativeai>=0.3.0",
         "rich>=13.0.0",
-        "click>=8.1.0",
-        "pydantic>=2.0.0",
-        "python-dotenv>=1.0.0",
     ],
     entry_points={
         "console_scripts": [
-            "aria=aria.cli:main",
+            "aria=aria.main:main",
         ],
     },
     include_package_data=True,

@@ -22,12 +22,16 @@ class ConfigManager:
     DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR / "config.json"
     
     DEFAULT_CONFIG = {
+        "provider": "",
         "api_key": "",
-        "model": "gemma-4-26b-a4b-it",
+        "api_keys": {},
+        "model": "",
         "temperature": 0.7,
-        "max_tokens": 2048,
+        "max_tokens": 8192,
+        "stream": False,
         "watch_mode": False,
         "guardian_mode": True,
+        "auto_apply": False,
         "created_at": None,
         "updated_at": None,
     }
@@ -68,9 +72,20 @@ class ConfigManager:
             self.config = self.DEFAULT_CONFIG.copy()
         
         # Override with environment variables
+        self._migrate_config()
         self._load_from_env()
         
         return self.config
+
+    def _migrate_config(self) -> None:
+        """Backfill fields introduced in newer versions."""
+        merged = self.DEFAULT_CONFIG.copy()
+        merged.update(self.config or {})
+        if not isinstance(merged.get("api_keys"), dict):
+            merged["api_keys"] = {}
+        if merged.get("api_key") and merged.get("provider"):
+            merged["api_keys"].setdefault(merged["provider"], merged["api_key"])
+        self.config = merged
     
     def _load_from_env(self) -> None:
         """Load configuration from environment variables."""
@@ -78,11 +93,29 @@ class ConfigManager:
         if env_key:
             self.config["api_key"] = env_key
             logger.info("API key loaded from environment variable")
-        
+
+        env_provider = os.getenv("ARIA_PROVIDER")
+        if env_provider:
+            self.config["provider"] = env_provider.strip().lower()
+            logger.info(f"Provider loaded from environment: {self.config['provider']}")
+
         env_model = os.getenv("ARIA_MODEL")
         if env_model:
             self.config["model"] = env_model
             logger.info(f"Model loaded from environment: {env_model}")
+
+        # Provider-specific environment overrides
+        env_map = {
+            "google": os.getenv("GOOGLE_API_KEY"),
+            "openrouter": os.getenv("OPENROUTER_API_KEY"),
+            "nvidia_nim": os.getenv("NVIDIA_NIM_API_KEY"),
+        }
+        self.config.setdefault("api_keys", {})
+        for provider, key in env_map.items():
+            if key:
+                self.config["api_keys"][provider] = key
+                if provider == self.config.get("provider"):
+                    self.config["api_key"] = key
     
     def save(self) -> bool:
         """
@@ -134,12 +167,10 @@ class ConfigManager:
         Returns:
             True if configuration is valid, False otherwise
         """
-        if not self.config.get("api_key"):
+        provider = self.config.get("provider") or ""
+        key = self.config.get("api_key") or self.config.get("api_keys", {}).get(provider)
+        if not key:
             logger.error("API key is not configured")
-            return False
-        
-        if not self.config.get("model"):
-            logger.error("Model is not configured")
             return False
         
         return True
@@ -157,7 +188,7 @@ class ConfigManager:
         Returns:
             Formatted configuration string
         """
-        lines = ["📋 ARIA Configuration:\n"]
+        lines = ["ARIA Configuration:\n"]
         for key, value in self.config.items():
             if key == "api_key":
                 # Mask API key for security

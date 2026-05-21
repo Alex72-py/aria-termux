@@ -243,7 +243,8 @@ else
   "temperature": 0.7,
   "max_tokens": 8192,
   "watch_mode": false,
-  "guardian_mode": true
+  "guardian_mode": true,
+  "auto_apply": false
 }
 EOF
     ok "Default config created at $CFG"

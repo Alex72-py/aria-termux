@@ -64,7 +64,7 @@ class KnowledgeBase:
             ),
             "python_no_module": KBEntry(
                 pattern="No module named",
-                solution="Install the Python module with `pip install --user <module>` or use a virtual environment with `python -m venv venv`",
+                solution="Install the Python module with `pip install --break-system-packages <module>` or use a virtual environment with `python -m venv venv`",
                 category="errors"
             ),
             "npm_not_found": KBEntry(

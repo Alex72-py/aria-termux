@@ -175,10 +175,10 @@ class Guardian:
         """
         risk_level, reason, requires_confirmation = self.analyze_command(command)
         score = self.calculate_risk_score(command)
-        emoji = self.get_risk_emoji(risk_level)
+        risk_tag = risk_level.name
         
         lines = [
-            f"{emoji} Risk Analysis",
+            f"[{risk_tag}] Risk Analysis",
             f"Command: {command}",
             f"Risk Level: {risk_level.name}",
             f"Risk Score: {score}/100",
@@ -186,7 +186,7 @@ class Guardian:
         ]
         
         if requires_confirmation:
-            lines.append("⚠️  Confirmation required before execution")
+            lines.append("WARNING: Confirmation required before execution")
         
         return "\n".join(lines)
     
