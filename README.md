@@ -147,7 +147,7 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 <summary><b>📱 Click to expand screenshot gallery</b></summary>
 
 ### Startup Interface
-<img width="1080" height="1739" alt="Startup Screen" src="<img width="1080" height="2173" alt="IMG_20260521_211043" src="https://github.com/user-attachments/assets/8ad4418c-72b1-4581-9dff-092006ff4b67" />
+<img width="1080" height="2173" alt="IMG_20260521_211043" src="https://github.com/user-attachments/assets/8ad4418c-72b1-4581-9dff-092006ff4b67" />
 
 ### Model Selection
 <img width="1080" height="2157" alt="Model Selection" src="https://github.com/user-attachments/assets/8f8a4674-ba89-4204-8f99-f54bbca52833" />
