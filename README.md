@@ -1,158 +1,35 @@
 <div align="center">
 
-# 🚀 ARIA — AI Terminal Co-Pilot for Termux
+# ARIA — AI Terminal Co-Pilot for Termux
 
 [![Python](https://img.shields.io/badge/Python-89%25-3776ab?logo=python&logoColor=white)](https://python.org)
 [![Shell](https://img.shields.io/badge/Shell-11%25-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Google Gemma 4](https://img.shields.io/badge/Google%20Gemma-4-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
 
-> **Built for developers who use Termux as a real development environment on Android.**
+**A terminal AI assistant that actually understands Termux.**
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## What is this?
 
-- [About](#about)
-- [✨ Features](#-features)
-- [🆕 Recent Improvements](#-recent-improvements)
-- [📸 Screenshots](#-screenshots)
-- [🎬 Demo](#-demo)
-- [🚀 Quick Start](#-quick-start)
-- [🔑 First Run](#-first-run)
-- [📖 Usage](#-usage)
-- [🏗️ Architecture](#-architecture)
-- [🧠 Knowledge Base](#-knowledge-base)
-- [🛡️ Safety Features](#-safety-features)
-- [📊 Supported Models](#-supported-models)
-- [⚙️ Configuration](#-configuration)
-- [🧪 Testing](#-testing)
-- [⚠️ Limitations](#-limitations)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+ARIA is an AI assistant that lives in your terminal. It knows about Termux, Android filesystem quirks, proot containers, clang-not-gcc, and all the weird stuff you deal with when developing on a phone.
+
+It can answer questions, diagnose errors, suggest fixes, and auto-repair broken installs — all from a slash-command interface inside Termux.
+
+**It's lightweight.** One dependency (`rich`). Everything else is stdlib. No bloated frameworks.
 
 ---
 
-## About
-
-ARIA is a terminal-native AI assistant designed specifically for Termux and Android development workflows. It combines Google's Gemma 4 models with a Termux-focused knowledge base, command system, and intelligent safety features to accelerate development on mobile devices.
-
-**Key Capabilities:**
-- 🤖 Intelligent code analysis and command fixing
-- 🛡️ Guardian safety layer for command validation
-- 📚 Offline knowledge base for Termux troubleshooting
-- 👀 Watch mode for automatic error detection
-- 💻 Rich terminal UI with syntax highlighting
-
-### Why ARIA?
-
-Unlike generic desktop-focused coding assistants, ARIA understands the unique constraints of Android-based development:
-
-<table>
-<tr>
-<td>
-
-⚙️ **Clang** instead of GCC  
-🗂️ **Android filesystem quirks**  
-🔒 **Proot/container environments**  
-
-</td>
-<td>
-
-📱 **Mobile-only workflows**  
-🚫 **Package and permission limitations**  
-🐛 **Termux-specific debugging patterns**  
-
-</td>
-</tr>
-</table>
-
----
-
-## ✨ Features
-
-<table>
-<tr>
-<td>
-
-### 💻 Advanced Terminal UI
-- Startup dashboard with visible slash commands
-- Slash Command Interface (`/ask`, `/fix`, `/provider`, `/model`, `/watch`)
-- Rich syntax highlighting & formatting
-- Animated startup sequences
-- Color-coded output
-
-</td>
-<td>
-
-### 🤖 Intelligent AI
-- Multi-provider model access
-- Dynamic model discovery
-- Auto model switching
-- Self-healing API layer
-- Graceful fallback handling
-
-</td>
-</tr>
-<tr>
-<td>
-
-### 🛡️ Safety First
-- Risk scoring system
-- Confirmation prompts for dangerous operations
-- Guardian safety layer
-- Multi-level command validation
-
-</td>
-<td>
-
-### 📚 Knowledge Base
-- Common Termux errors
-- Package management tips
-- Python environments
-- Proot-distro setup
-- Android bridge tools
-
-</td>
-</tr>
-<tr>
-<td colspan="2">
-
-### 📋 Additional Features
-- **Clipboard Integration**: Copy commands with one keystroke  
-- **Watch Mode**: Auto-detect and analyze terminal errors  
-- **Offline Support**: Works without internet for KB queries  
-
-</td>
-</tr>
-</table>
-
----
-
-## 🆕 Recent Improvements
-
-- **Fixed infinite spinner**: The "thinking" animation now terminates cleanly when the model responds. No more stuck spinners after `/fix` or bare-text queries.
-- **First-time setup wizard**: On first launch (empty config), ARIA detects missing provider/key/model and launches the config wizard automatically with provider links.
-- **API key validation**: Keys are validated immediately after setup and on first run. Invalid keys produce a clear warning instead of silent failures.
-- **Lightweight install**: Only `rich` is required. `google-generativeai` is now optional (only needed for the Google provider). OpenRouter and NVIDIA NIM work with zero extra packages.
-- **Streaming removed**: Non-stream mode is used for all providers, eliminating the partial-response and hung-connection issues common on mobile networks.
-- **install.sh fixes**: Corrected hardcoded path (`aria-project` → `aria-termux`) and aligned the default config schema with the runtime code.
-- **Better provider switching**: Switch directly with `/provider google`, `/provider openrouter`, or `/provider nvidia_nim`.
-- **Provider rotation**: `/provider cycle` jumps to the next configured provider.
-- **Key management from the prompt**: `/provider key <name>` updates or saves a provider key inline.
-- **Cleaner help output**: `/help`, `/provider list`, and `/model list` now read like a control surface.
-
----
-
-## 📸 Screenshots
+## Screenshots
 
 <details>
-<summary><b>📱 Click to expand screenshot gallery</b></summary>
+<summary><b>Click to expand</b></summary>
 
-### Startup Interface
-<img width="1080" height="2173" alt="IMG_20260521_211043" src="https://github.com/user-attachments/assets/8ad4418c-72b1-4581-9dff-092006ff4b67" />
+### Startup
+<img width="1080" height="2173" alt="Startup" src="https://github.com/user-attachments/assets/8ad4418c-72b1-4581-9dff-092006ff4b67" />
 
 ### Model Selection
 <img width="1080" height="2157" alt="Model Selection" src="https://github.com/user-attachments/assets/8f8a4674-ba89-4204-8f99-f54bbca52833" />
@@ -162,9 +39,7 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 
 </details>
 
----
-
-## 🎬 Demo
+## Demo
 
 
 
@@ -174,271 +49,141 @@ https://github.com/user-attachments/assets/0bdec9c0-fd24-4844-8c09-aea0cd376e34
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Termux app on Android
-- Python 3.8+
-- Internet connection (for AI features)
-
-### Installation
+## Install
 
 ```bash
-# Update system packages
 pkg update && pkg upgrade -y
-
-# Install required tools
 pkg install python git -y
-pkg install termux-api -y  # optional, for clipboard
 
-# Clone and install ARIA
 git clone https://github.com/Alex72-py/aria-termux.git
 cd aria-termux
-
-# Install (only 'rich' is required)
 pip install -r requirements.txt --break-system-packages
 
-# Optional: install Google provider support
-# pip install google-generativeai --break-system-packages
-
-# Launch ARIA
 python run_aria.py
 ```
 
-> 💡 **Tip:** `termux-api` is optional but recommended for clipboard integration. ARIA will gracefully fall back without it.
+That's it. If you want to use the Google provider specifically, also run:
+```bash
+pip install google-generativeai --break-system-packages
+```
+
+OpenRouter and NVIDIA NIM work out of the box — no extra packages.
 
 ---
 
-## 🔑 First Run
+## First Run
 
-ARIA launches an interactive configuration wizard on first startup:
+On first launch, ARIA detects there's no config and walks you through setup:
 
 ```
-╔══════════════════════════════════════════╗
-║  Welcome to ARIA Configuration Wizard    ║
-╚══════════════════════════════════════════╝
-
 Choose provider [google/openrouter/nvidia_nim]: google
-Enter API key for provider: ••••••••••••••
-Enter preferred model: gemma-4-26b-a4b-it
+Enter API key: ••••••••••••••
+Enter model [gemma-4-26b-a4b-it]:
 Enable Guardian mode? [y/n]: y
 ```
 
-**Get your free Google API key here:**  
-🔗 [Google AI Studio](https://aistudio.google.com/app/apikey)
+It validates your key right there. If something's wrong, you'll know immediately instead of getting cryptic errors later.
+
+**Get a free key:**
+- Google: [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+- OpenRouter: [openrouter.ai/keys](https://openrouter.ai/keys)
+- NVIDIA NIM: [build.nvidia.com](https://build.nvidia.com)
 
 ---
 
-## 📖 Usage
+## Usage
 
-### Startup Experience
+Just type. Bare text goes to the model as a question. Or use slash commands:
 
-After setup, ARIA shows:
+| Command | What it does |
+|---------|-------------|
+| `/ask <question>` | Ask anything |
+| `/fix` | Diagnose the last failed command |
+| `/fix "error text"` | Diagnose a specific error |
+| `/provider list` | Show configured providers |
+| `/provider openrouter` | Switch provider |
+| `/provider cycle` | Rotate to next provider |
+| `/provider key <name>` | Update a provider's API key |
+| `/model list` | List available models |
+| `/model set <name>` | Switch model |
+| `/kb <query>` | Search offline knowledge base |
+| `/watch` | Toggle watch mode (monitors errors from other sessions) |
+| `/status` | Show current state |
+| `/config` | Re-run the setup wizard |
+| `/help` | Show all commands |
 
-- the active provider and model
-- guardian and watch status
-- a visible slash-command panel
-- quick provider-switch shortcuts
+### Watch Mode
 
-Bare text is treated as `/ask`, so you can either type a command or just start talking to the model.
+Enable `/watch`, then work in another Termux session. When a command fails there, the shell hook writes it to `~/.aria/last_fail.json`. Come back to ARIA, type `/fix`, and it reads the failure automatically.
 
-### Command Reference
+---
 
-<table>
-<tr><th>Command</th><th>Description</th><th>Example</th></tr>
-<tr>
-<td><code>/ask</code></td>
-<td>Ask ARIA any question about Termux or development</td>
-<td><code>/ask How do I install Python on Termux?</code></td>
-</tr>
-<tr>
-<td><code>/fix</code></td>
-<td>Analyze and fix terminal errors</td>
-<td><code>/fix "clang: error: linker command failed"</code></td>
-</tr>
-<tr>
-<td><code>/provider</code></td>
-<td>Inspect or switch model providers</td>
-<td><code>/provider openrouter</code></td>
-</tr>
-<tr>
-<td><code>/model</code></td>
-<td>Inspect or switch the active model</td>
-<td><code>/model set google/gemma-3n-e4b-it</code></td>
-</tr>
-<tr>
-<td><code>/models</code></td>
-<td>List models for the current provider</td>
-<td><code>/models</code></td>
-</tr>
-<tr>
-<td><code>/kb</code></td>
-<td>Search the offline knowledge base</td>
-<td><code>/kb python module not found</code></td>
-</tr>
-<tr>
-<td><code>/watch</code></td>
-<td>Enable automatic error detection</td>
-<td><code>/watch</code></td>
-</tr>
-<tr>
-<td><code>/status</code></td>
-<td>Show active provider, model, and safety state</td>
-<td><code>/status</code></td>
-</tr>
-</table>
+## Providers
 
-### Provider Switching
+| Provider | Endpoint | Auth |
+|----------|----------|------|
+| `google` | Google AI Studio | API key from aistudio |
+| `openrouter` | openrouter.ai | API key from dashboard |
+| `nvidia_nim` | integrate.api.nvidia.com | API key from build.nvidia.com |
 
-Common flows:
+ARIA auto-discovers available models from whichever provider you're using.
 
-```bash
-/provider list
-/provider google
-/provider openrouter
-/provider nvidia_nim
-/provider cycle
-/provider key openrouter
-/model list
+```
+Gemma 4 family (Google):
+├── gemma-4-2b-it
+├── gemma-4-4b-it
+├── gemma-4-26b-a4b-it
+└── gemma-4-31b-it
 ```
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│           ARIA Core System              │
-├─────────────────────────────────────────┤
-│  📋 Command System                      │
-│  ├─ /ask, /fix, /provider, /model      │
-│  ├─ /models, /kb, /watch, /status      │
-│                                         │
-│  🤖 API Client                          │
-│  ├─ Multi-Provider Routing              │
-│  ├─ Auto Model Discovery                │
-│  ├─ Intelligent Retry Logic             │
-│  └─ Fallback Handling                   │
-│                                         │
-│  🛡️ Guardian Safety Layer               │
-│  ├─ Risk Assessment                     │
-│  └─ Confirmation Prompts                │
-│                                         │
-│  👀 Watch Mode                          │
-│  ├─ Error Detection                     │
-│  └─ Auto Analysis                       │
-│                                         │
-│  📚 Offline Knowledge Base              │
-│  └─ Termux Troubleshooting              │
-│                                         │
-│  🎨 Rich Terminal UI                    │
-│  ├─ Syntax Highlighting                 │
-│  ├─ Animations                          │
-│  └─ Color-Coded Output                  │
-└─────────────────────────────────────────┘
+aria/
+├── main.py          — Main loop, command dispatch, setup wizard
+├── api_client.py    — Provider abstraction (Google, OpenRouter, NVIDIA)
+├── command_system.py — Slash command registry and parsing
+├── config.py        — JSON config management (~/.aria/config.json)
+├── guardian.py      — Risk scoring and confirmation prompts
+├── knowledge_base.py — Offline Termux troubleshooting data
+├── watch_mode.py    — File watcher for cross-session error capture
+├── repair_agent.py  — Local-first fix planning (no model call needed)
+└── ui.py            — Rich terminal output, spinners, formatting
 ```
+
+The API layer uses Python's `urllib` directly — no `requests`, no `httpx`, no heavy HTTP libs. Provider switching is just changing which base URL and auth header gets used.
 
 ---
 
-## 🧠 Knowledge Base
+## Guardian
 
-ARIA includes comprehensive offline knowledge covering:
+Before ARIA suggests running anything dangerous, it scores the risk:
 
-| Category | Topics |
-|----------|--------|
-| 🐛 **Common Errors** | Package conflicts, permission issues, build errors |
-| 📦 **Package Management** | pkg, apt, pip installation & troubleshooting |
-| 🐍 **Python** | Virtual environments, venv, pip caching |
-| 🐧 **Proot-Distro** | Linux distributions, container setup |
-| 🔌 **Android Bridge** | Termux:API, Tasker integration, system access |
-| 🔐 **Git & SSH** | SSH keys, Git configuration, GitHub access |
-| 🌐 **Networking** | Port forwarding, localhost, DNS issues |
+| Level | What happens |
+|-------|-------------|
+| Low (green) | Runs immediately |
+| Medium (yellow) | Runs with a notice |
+| High (orange) | Asks for confirmation |
+| Critical (red) | Requires explicit approval |
 
----
-
-## 🛡️ Safety Features
-
-### Guardian Safety Layer
-
-ARIA analyzes potentially dangerous commands before execution with a comprehensive risk assessment system:
-
-<table>
-<tr>
-<th>Risk Level</th>
-<th>Color</th>
-<th>Description</th>
-<th>Action</th>
-</tr>
-<tr>
-<td>🟢 Low</td>
-<td>Green</td>
-<td>Safe operations (listing, viewing)</td>
-<td>Execute immediately</td>
-</tr>
-<tr>
-<td>🟡 Medium</td>
-<td>Yellow</td>
-<td>Network/code operations</td>
-<td>Execute with notice</td>
-</tr>
-<tr>
-<td>🟠 High</td>
-<td>Orange</td>
-<td>User/system modifications</td>
-<td>Require confirmation</td>
-</tr>
-<tr>
-<td>🔴 Critical</td>
-<td>Red</td>
-<td>Recursive deletion, destructive commands</td>
-<td>Require explicit approval</td>
-</tr>
-</table>
+Things like `rm -rf`, `chmod 777`, pipe-to-shell curls — all get flagged.
 
 ---
 
-## 📊 Supported Models
+## Config
 
-ARIA supports multiple providers:
+Stored at `~/.aria/config.json`:
 
-| Provider | Notes |
-|----------|-------|
-| `google` | Google AI Studio / Gemma access |
-| `openrouter` | OpenAI-compatible multi-model routing |
-| `nvidia_nim` | NVIDIA hosted model endpoints |
-
-Example Google Gemma family:
-
-```
-Gemma 4 Model Family
-├── gemma-4-2b-it      (Lightweight, 2B parameters)
-├── gemma-4-4b-it      (Balanced, 4B parameters)
-├── gemma-4-26b-a4b-it (Advanced, 26B parameters)
-└── gemma-4-31b-it     (Expert, 31B parameters)
-```
-
-**Auto-discovery:** ARIA fetches available models from the active provider automatically.
-
----
-
-## ⚙️ Configuration
-
-### Config File
-
-Configuration is stored locally in:
-```
-~/.aria/config.json
-```
-
-Example structure:
 ```json
 {
   "provider": "google",
-  "api_key": "active-provider-key",
+  "api_key": "your-active-key",
   "api_keys": {
-    "google": "your-google-ai-studio-key",
-    "openrouter": "your-openrouter-key",
-    "nvidia_nim": "your-nvidia-key"
+    "google": "...",
+    "openrouter": "...",
+    "nvidia_nim": "..."
   },
   "model": "gemma-4-26b-a4b-it",
   "temperature": 0.7,
@@ -449,134 +194,78 @@ Example structure:
 }
 ```
 
-### Environment Variables
-
-Override config with environment variables:
-
+You can also override with env vars:
 ```bash
-export ARIA_API_KEY="your-key"
+export ARIA_API_KEY="..."
 export ARIA_PROVIDER="openrouter"
 export ARIA_MODEL="gemma-4-31b-it"
-export GOOGLE_API_KEY="your-google-key"
-export OPENROUTER_API_KEY="your-openrouter-key"
-export NVIDIA_NIM_API_KEY="your-nvidia-key"
 ```
 
 ---
 
-## 🧪 Testing
+## Dependencies
 
-Run the test suite with pytest:
+| Package | Why | Required |
+|---------|-----|:--------:|
+| `rich` | Terminal UI, syntax highlighting, spinners | Yes |
+| `google-generativeai` | Google provider only | No |
+
+Everything else — HTTP, JSON, threading, config — is stdlib. OpenRouter and NVIDIA NIM need zero extra packages.
+
+---
+
+## Testing
 
 ```bash
-# Run all tests
-pytest -q
-
-# Run with verbose output
-pytest -v
-
-# Run one test file
-pytest tests/test_watch_mode.py -q
+pytest -q          # 34 tests, all pass
+pytest -v          # verbose
 ```
 
 ---
 
-## ⚠️ Limitations
+## What changed recently
 
-> **Development Status:** Active development. Contributions welcome.
-
-- 🔄 Watch mode monitors `~/.aria/last_fail.json` — works across sessions via shell hooks
-- 🌐 Internet connection required for AI features (knowledge base works offline)
-- 📱 Optimized primarily for Termux on Android
-- 🤔 Some auto-fix suggestions require manual verification before applying
-
----
-
-## 📦 Dependencies
-
-| Package | Purpose | Required? |
-|---------|---------|:---------:|
-| `rich` | Terminal formatting, syntax highlighting & UI | **Yes** |
-| `google-generativeai` | Google AI Studio / Gemma provider | Optional (only for `google` provider) |
-
-> **Lightweight by design.** ARIA uses Python's standard library (`urllib`, `json`, `threading`) for HTTP, config, and concurrency. The only hard dependency is `rich` for the terminal UI. If you use the Google provider, install the optional package:
-> ```bash
-> pip install google-generativeai --break-system-packages
-> ```
->
-> OpenRouter and NVIDIA NIM providers work with zero extra packages.
+- Fixed the stuck spinner (model responses now terminate the animation properly)
+- First-run auto-detects missing config and launches setup wizard
+- API keys get validated on save (real auth check, not just endpoint ping)
+- Removed streaming mode — non-stream is more reliable on mobile connections
+- `google-generativeai` is now optional, not required
+- Fixed `install.sh` hardcoding wrong directory name
+- Config schema aligned between installer and runtime
 
 ---
 
-## 🤝 Contributing
+## Limitations
 
-We welcome contributions! Here's how to get started:
+- Watch mode works via file polling — it's not instant, but it's reliable
+- Needs internet for AI features (knowledge base works offline)
+- Built for Termux on Android — works on Linux too, but that's not the focus
+- Auto-fix suggestions should be reviewed before applying
+
+---
+
+## Contributing
 
 ```bash
-# Create a feature branch
-git checkout -b feature/my-feature
-
-# Make your changes and commit
-git add .
-git commit -m "Add my feature"
-
-# Push and create a pull request
-git push origin feature/my-feature
+git checkout -b feature/my-thing
+# make changes
+git commit -m "what you did"
+git push origin feature/my-thing
 ```
 
-**Guidelines:**
-- Follow PEP 8 for Python code
-- Add tests for new features
-- Update documentation
-- Keep commits focused and descriptive
+Keep it simple. PEP 8. Tests for new features. Don't add dependencies unless absolutely necessary.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2026 Alex72-py
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
----
-
-## 🎯 Hackathon Submission
-
-**Submitted for:** Google Gemma 4 Challenge
-
-### 🏆 Highlights
-
-- 🎯 **Real-world Focus**: Actual Termux developer workflow optimization
-- 🔄 **Dynamic Discovery**: Auto-detect and switch between available models
-- 🛡️ **Resilient API**: Self-healing with intelligent retry logic
-- 📱 **Mobile-First**: Terminal UI optimized for small screens
-- 💾 **Offline Ready**: Fallback support without internet connection
-- 🔐 **Safety-Conscious**: Risk assessment before executing commands
-- 🪶 **Lightweight**: Single required dependency (`rich`), native stdlib networking
+MIT. See [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
 
-### 🚀 ARIA
-
-*Making Android terminal development faster, safer, and more usable.*
-
-**[⬆ back to top](#-aria--ai-terminal-co-pilot-for-termux)**
+**Submitted for the Google Gemma 4 Challenge**
 
 [![Stars](https://img.shields.io/github/stars/Alex72-py/aria-termux?style=social)](https://github.com/Alex72-py/aria-termux)
 [![GitHub](https://img.shields.io/badge/GitHub-Alex72--py-181717?logo=github)](https://github.com/Alex72-py)
