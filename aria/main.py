@@ -321,20 +321,24 @@ class ARIA:
         return response
 
     def _process_ai_response(self, response: str, status_handler=None) -> str:
-        """Extract and animate <thought> steps, then return cleaned response."""
+        """Extract <thought> blocks, show brief status updates, return cleaned response."""
         import re
         thoughts = re.findall(r"<thought>(.*?)</thought>", response, re.DOTALL)
-        
+
         if thoughts and status_handler:
             for thought in thoughts:
-                # Split thought into lines/steps and animate them
                 steps = [s.strip() for s in thought.split("\n") if s.strip()]
-                for step in steps:
-                    # Clean the step text (e.g., remove leading dashes)
+                for step in steps[:5]:  # Cap at 5 steps to avoid long waits
                     clean_step = re.sub(r"^[-\d.]+\s*", "", step)
-                    status_handler.update(f"Analyzing: {clean_step}")
-                    time.sleep(0.4)
-        
+                    # Truncate to 50 chars so it fits on a phone screen
+                    if len(clean_step) > 50:
+                        clean_step = clean_step[:47] + "..."
+                    try:
+                        status_handler.update(clean_step)
+                    except Exception:
+                        pass
+                    time.sleep(0.15)
+
         # Remove all <thought> blocks from the final response
         clean_response = re.sub(r"<thought>.*?</thought>", "", response, flags=re.DOTALL).strip()
         return clean_response

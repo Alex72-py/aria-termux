@@ -78,9 +78,18 @@ class LiveStatus:
         self.live = live
 
     def update(self, label: str):
-        """Update the status label dynamically."""
-        self.spinner.text = f"  [brand_cyan]{label}...[/brand_cyan]"
-        self.live.refresh()
+        """Update the status label dynamically. Truncates to prevent wrapping."""
+        from rich.markup import escape
+        # Escape any accidental Rich markup in model output
+        safe_label = escape(label)
+        # Hard truncate to prevent multi-line wrapping on small terminals
+        if len(safe_label) > 60:
+            safe_label = safe_label[:57] + "..."
+        self.spinner.text = f"  [brand_cyan]{safe_label}[/brand_cyan]"
+        try:
+            self.live.refresh()
+        except Exception:
+            pass  # Swallow refresh errors on tiny terminals
 
 @contextmanager
 def status(label: str):
