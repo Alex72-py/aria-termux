@@ -173,23 +173,6 @@ class ARIA:
             ),
         )
         clean_response = self._process_ai_response(response, status_handler)
-        
-        # Check for executable plan
-        plan = self.repair_agent.plan_from_ai_text(clean_response)
-        if plan.steps:
-            UIManager.display_response(clean_response, is_markdown=True)
-            auto_apply = self.config_manager.get("auto_apply", False)
-            if auto_apply:
-                UIManager.display_info("Auto-applying suggested plan...")
-                outcome = self.repair_agent.execute_plan(plan)
-                return outcome.render()
-            
-            if UIManager.confirm("Would you like to execute this suggested plan?"):
-                with UIManager.status("Executing plan..."):
-                    outcome = self.repair_agent.execute_plan(plan)
-                return outcome.render()
-            return "Plan displayed but not executed."
-
         return clean_response
 
     def cmd_fix(self, error: str = "", status_handler=None) -> str:
@@ -260,15 +243,8 @@ class ARIA:
         if outcome.matched:
             if outcome.applied:
                 return outcome.render()
-            
-            # Not applied yet (either auto_apply=False or blocked by safety)
-            UIManager.display_info(outcome.render(), title="Proposed Local Repair")
-            if UIManager.confirm("Apply this repair plan?"):
-                with UIManager.status("Applying repairs..."):
-                    outcome = self.repair_agent.execute_plan(outcome)
-                return outcome.render()
-            else:
-                return "Local repair cancelled by user."
+            # Show the plan but don't block with a prompt
+            return outcome.render() + "\n\nRun with: /fix --apply"
 
         # ── Step 2: Fallback to AI model for complex failures ─────
         if not parts:
@@ -302,22 +278,6 @@ class ARIA:
         )
         response = self._process_ai_response(raw_response, status_handler)
         
-        # ── Step 3: Offer to execute AI-suggested fix ─────────────
-        plan = self.repair_agent.plan_from_ai_text(response)
-        if plan.steps:
-            UIManager.display_response(response, is_markdown=True)
-            auto_apply = self.config_manager.get("auto_apply", False)
-            if auto_apply:
-                UIManager.display_info("Auto-applying AI-suggested fix...")
-                outcome = self.repair_agent.execute_plan(plan)
-                return outcome.render()
-            
-            if UIManager.confirm("Would you like to execute the AI-suggested plan?"):
-                with UIManager.status("Executing AI plan..."):
-                    outcome = self.repair_agent.execute_plan(plan)
-                return outcome.render()
-            return "AI fix displayed but not executed."
-
         return response
 
     def _process_ai_response(self, response: str, status_handler=None) -> str:
