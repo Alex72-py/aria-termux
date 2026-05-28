@@ -69,8 +69,14 @@ class ARIA:
             self.config_manager.set("api_key", selected_key)
             config["api_key"] = selected_key
 
-        if not provider or not config.get("model") or not config.get("api_key"):
-            logger.warning("Incomplete configuration; launching wizard")
+        # First-time setup detection: if no provider/model/key, run wizard
+        is_first_run = not provider or not config.get("model") or not config.get("api_key")
+        if is_first_run:
+            logger.warning("Incomplete configuration; launching first-time setup")
+            UIManager.display_info(
+                "Welcome to ARIA! Let's set up your AI provider and API key.",
+                title="First-Time Setup"
+            )
             self.run_config_wizard()
             config = self.config_manager.load()
             provider = (config.get("provider") or "").strip().lower()
@@ -86,7 +92,6 @@ class ARIA:
                 temperature=config.get("temperature", 0.7),
                 max_tokens=config.get("max_tokens", 8192),
                 provider=provider,
-                stream=config.get("stream", False),
             )
             self.api_client = APIClient(api_config)
             logger.info("API client ready")
@@ -94,6 +99,21 @@ class ARIA:
             logger.error(f"API init failed: {e}")
             UIManager.display_error(f"API init failed: {e}")
             return False
+
+        # Validate API key on setup (non-blocking: warn but don't fail)
+        if is_first_run or not config.get("_key_validated"):
+            valid, msg = self.api_client.validate_key(timeout=10)
+            if valid:
+                UIManager.display_success(f"API key validated: {msg}")
+                self.config_manager.set("_key_validated", True)
+                self.config_manager.save()
+            else:
+                UIManager.display_warning(
+                    f"API key validation failed: {msg}\n\n"
+                    "ARIA will still try to work, but you may need to run /config "
+                    "to fix your API key.",
+                    title="Key Validation Warning"
+                )
 
         self._register_commands()
 
@@ -593,7 +613,9 @@ class ARIA:
         from rich.panel import Panel
         Console().print(Panel(
             "[bold]ARIA Configuration Wizard[/bold]\n\n"
-            "Free key (no card): [cyan]https://aistudio.google.com/app/apikey[/cyan]",
+            "Free key (no card): [cyan]https://aistudio.google.com/app/apikey[/cyan]\n"
+            "OpenRouter: [cyan]https://openrouter.ai/keys[/cyan]\n"
+            "NVIDIA NIM: [cyan]https://build.nvidia.com[/cyan]",
             border_style="cyan"
         ))
 
@@ -605,6 +627,13 @@ class ARIA:
         provider = UIManager.prompt(
             f"Provider [{cur_provider}] (google/openrouter/nvidia_nim): "
         ).strip().lower() or cur_provider
+
+        # Validate provider name
+        valid_providers = ("google", "openrouter", "nvidia_nim")
+        if provider not in valid_providers:
+            UIManager.display_warning(f"Unknown provider '{provider}'. Defaulting to 'google'.")
+            provider = "google"
+
         api_key = UIManager.prompt(
             f"API key for {provider} (Enter to keep current): "
         ).strip() or cur_key
@@ -622,7 +651,27 @@ class ARIA:
         self.config_manager.set("auto_apply", auto_apply)
         self.config_manager.set("max_tokens", 8192)
         self.config_manager.save()
-        UIManager.display_success("Configuration saved!")
+
+        # Validate the key immediately after saving
+        UIManager.spinner("Validating API key...", duration=0.3)
+        try:
+            test_config = APIConfig(
+                api_key=api_key, model=model,
+                provider=provider, max_tokens=8192,
+            )
+            test_client = APIClient(test_config)
+            valid, msg = test_client.validate_key(timeout=10)
+            if valid:
+                UIManager.display_success(f"Configuration saved! Key verified: {msg}")
+                self.config_manager.set("_key_validated", True)
+                self.config_manager.save()
+            else:
+                UIManager.display_warning(
+                    f"Configuration saved, but key validation failed: {msg}\n"
+                    "You can still use ARIA — check your key if requests fail."
+                )
+        except Exception as e:
+            UIManager.display_warning(f"Configuration saved. Key check skipped: {e}")
 
     def _set_provider_key(self, provider: str) -> str:
         api_keys = self.config_manager.get("api_keys", {})
@@ -677,7 +726,6 @@ class ARIA:
                     temperature=config.get("temperature", 0.7),
                     max_tokens=config.get("max_tokens", 8192),
                     provider=config.get("provider", ""),
-                    stream=config.get("stream", False),
                 )
             )
             models = self.api_client.fetch_available_models()
@@ -740,8 +788,8 @@ class ARIA:
                     with UIManager.status(label) as st:
                         result = self._execute_with_timeout(
                             lambda: self.command_system.execute(parsed, status_handler=st),
-                            timeout_s=120,
-                            timeout_message="Command timed out after 120s.",
+                            timeout_s=90,
+                            timeout_message="Command timed out after 90s.",
                         )
                     if result:
                         UIManager.display_response(result, is_markdown=False)
@@ -750,8 +798,8 @@ class ARIA:
                     with UIManager.status("Thinking... Querying model...") as st:
                         result = self._execute_with_timeout(
                             lambda: self.cmd_ask(user_input, status_handler=st),
-                            timeout_s=120,
-                            timeout_message="Model request timed out after 120s.",
+                            timeout_s=90,
+                            timeout_message="Model request timed out after 90s.",
                         )
                     if result:
                         UIManager.display_response(result, is_markdown=True)
@@ -781,16 +829,20 @@ class ARIA:
                 pass
 
     def _execute_with_timeout(self, fn, timeout_s: int, timeout_message: str) -> str:
+        """Execute fn in a thread with a hard timeout. Always returns a string."""
         try:
             with ThreadPoolExecutor(max_workers=1) as ex:
                 future = ex.submit(fn)
-                return future.result(timeout=timeout_s)
+                result = future.result(timeout=timeout_s)
+                return result if result else ""
         except FutureTimeoutError:
             logger.error(timeout_message)
             return f"Error: {timeout_message}\nTry /models or /config, then retry."
+        except KeyboardInterrupt:
+            return "Interrupted."
         except Exception as e:
             logger.error(f"Execution failure: {e}")
-            return f"Error: Execution failed: {e}"
+            return f"Error: {e}"
 
     def _status_label_for_command(self, command_name: str) -> str:
         labels = {

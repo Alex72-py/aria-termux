@@ -24,7 +24,6 @@ class APIConfig:
     max_tokens: int = 8192
     provider: str = "google"
     timeout: int = 60
-    stream: bool = False
 
 
 class ProviderError(RuntimeError):
@@ -49,7 +48,8 @@ class GoogleProvider(BaseProvider):
     def __init__(self, api_key: str):
         if genai is None:
             raise ProviderError(
-                "Google provider requires the optional dependency `google-generativeai`",
+                "Google provider requires `google-generativeai`. "
+                "Install with: pip install google-generativeai --break-system-packages",
                 retryable=False,
             )
         self.api_key = api_key
@@ -153,55 +153,16 @@ class OpenAICompatProvider(BaseProvider):
             "messages": messages,
             "temperature": config.temperature,
             "max_tokens": config.max_tokens,
-            "stream": bool(config.stream),
+            "stream": False,  # Force non-stream for reliability
         }
-        if config.stream:
-            return self._generate_stream(payload, timeout=config.timeout)
         data = self._request_json("POST", "/chat/completions", payload=payload, timeout=config.timeout)
         try:
             return data["choices"][0]["message"]["content"]
-        except Exception as e:
+        except (KeyError, IndexError, TypeError) as e:
             raise ProviderError(f"{self.name} malformed completion payload", retryable=True) from e
 
-    def _generate_stream(self, payload: Dict[str, Any], timeout: int) -> str:
-        """Best-effort streaming with graceful fallback if stream interrupts."""
-        url = f"{self.base_url}/chat/completions"
-        req = urllib.request.Request(
-            url,
-            method="POST",
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json",
-                **self.extra_headers,
-            },
-        )
-        chunks: List[str] = []
-        try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                for raw_line in resp:
-                    line = raw_line.decode("utf-8", errors="replace").strip()
-                    if not line or not line.startswith("data:"):
-                        continue
-                    body = line[5:].strip()
-                    if body == "[DONE]":
-                        break
-                    try:
-                        event = json.loads(body)
-                        delta = event.get("choices", [{}])[0].get("delta", {}).get("content")
-                        if delta:
-                            chunks.append(delta)
-                    except Exception:
-                        continue
-        except Exception as e:
-            if chunks:
-                # Partial stream recovery for interruptions.
-                return "".join(chunks)
-            raise ProviderError(f"{self.name} streaming interrupted: {e}", retryable=True) from e
-        text = "".join(chunks).strip()
-        if not text:
-            raise ProviderError(f"{self.name} returned empty streamed response", retryable=True)
-        return text
+    # Streaming removed: non-stream mode is more reliable for Termux
+    # and eliminates the "infinite thinking" spinner issue.
 
 
 class APIClient:
@@ -302,3 +263,33 @@ class APIClient:
 
     def is_available(self) -> bool:
         return bool(self.fetch_available_models())
+
+    def validate_key(self, timeout: int = 10) -> tuple:
+        """Quick health-check: verify the API key works with a minimal request.
+        Returns (success: bool, message: str)."""
+        if not self._provider:
+            return False, "No provider initialized"
+        try:
+            if isinstance(self._provider, GoogleProvider):
+                # Minimal call: list models (lightweight, requires valid key)
+                self._provider.list_models()
+            else:
+                # For OpenAI-compat: send a tiny completion request (1 token)
+                # This actually validates the key unlike /models which is public
+                payload = {
+                    "model": self.config.model or "openrouter/auto",
+                    "messages": [{"role": "user", "content": "hi"}],
+                    "max_tokens": 1,
+                }
+                self._provider._request_json(
+                    "POST", "/chat/completions", payload=payload, timeout=timeout
+                )
+            return True, f"{self.config.provider} API key is valid"
+        except ProviderError as e:
+            msg = str(e)
+            # If it's a model-not-found error but auth passed, key is valid
+            if "404" in msg or "not found" in msg.lower() or "unavailable" in msg.lower():
+                return True, f"{self.config.provider} key accepted (model may need updating)"
+            return False, msg
+        except Exception as e:
+            return False, f"Validation failed: {e}"

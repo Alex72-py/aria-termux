@@ -393,8 +393,8 @@ class UIManager:
     @staticmethod
     @contextmanager
     def status(label: str):
-        with status(label):
-            yield
+        with status(label) as st:
+            yield st
 
     @staticmethod
     def spinner(message: str, duration: float = 0.5, spinner_type: str = "neural") -> None:

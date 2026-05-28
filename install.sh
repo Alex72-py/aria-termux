@@ -28,7 +28,7 @@ echo -e "${X}"
 
 # Guard: run from project root
 if [ ! -f "setup.py" ] && [ ! -f "run_aria.py" ]; then
-    fail "Run this from the aria-project directory."
+    fail "Run this from the aria-termux directory."
     exit 1
 fi
 
@@ -72,7 +72,7 @@ else
 #!/usr/bin/env python3
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "aria-project"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "aria-termux"))
 from aria.main import main
 main()
 PYEOF
@@ -238,7 +238,9 @@ PYEOF
 else
     cat > "$CFG" << 'EOF'
 {
+  "provider": "",
   "api_key": "",
+  "api_keys": {},
   "model": "gemma-4-26b-a4b-it",
   "temperature": 0.7,
   "max_tokens": 8192,

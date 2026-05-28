@@ -133,11 +133,16 @@ Unlike generic desktop-focused coding assistants, ARIA understands the unique co
 
 ## 🆕 Recent Improvements
 
-- **Better startup UX**: ARIA now opens with a session dashboard that shows the active provider, model, safety state, watch state, and the most useful slash commands immediately.
-- **Faster provider switching**: You can now switch directly with `/provider google`, `/provider openrouter`, or `/provider nvidia_nim` without going back through the full config wizard.
-- **Provider rotation**: `/provider cycle` jumps to the next configured provider, which is useful when comparing output or working around a provider issue.
+- **Fixed infinite spinner**: The "thinking" animation now terminates cleanly when the model responds. No more stuck spinners after `/fix` or bare-text queries.
+- **First-time setup wizard**: On first launch (empty config), ARIA detects missing provider/key/model and launches the config wizard automatically with provider links.
+- **API key validation**: Keys are validated immediately after setup and on first run. Invalid keys produce a clear warning instead of silent failures.
+- **Lightweight install**: Only `rich` is required. `google-generativeai` is now optional (only needed for the Google provider). OpenRouter and NVIDIA NIM work with zero extra packages.
+- **Streaming removed**: Non-stream mode is used for all providers, eliminating the partial-response and hung-connection issues common on mobile networks.
+- **install.sh fixes**: Corrected hardcoded path (`aria-project` → `aria-termux`) and aligned the default config schema with the runtime code.
+- **Better provider switching**: Switch directly with `/provider google`, `/provider openrouter`, or `/provider nvidia_nim`.
+- **Provider rotation**: `/provider cycle` jumps to the next configured provider.
 - **Key management from the prompt**: `/provider key <name>` updates or saves a provider key inline.
-- **Cleaner help output**: `/help`, `/provider list`, and `/model list` now read like a control surface instead of raw debug text.
+- **Cleaner help output**: `/help`, `/provider list`, and `/model list` now read like a control surface.
 
 ---
 
@@ -184,14 +189,17 @@ pkg update && pkg upgrade -y
 
 # Install required tools
 pkg install python git -y
-pkg install termux-api -y
+pkg install termux-api -y  # optional, for clipboard
 
 # Clone and install ARIA
 git clone https://github.com/Alex72-py/aria-termux.git
 cd aria-termux
 
-# Install Python dependencies
-pip install -r requirements.txt
+# Install (only 'rich' is required)
+pip install -r requirements.txt --break-system-packages
+
+# Optional: install Google provider support
+# pip install google-generativeai --break-system-packages
 
 # Launch ARIA
 python run_aria.py
@@ -433,9 +441,11 @@ Example structure:
     "nvidia_nim": "your-nvidia-key"
   },
   "model": "gemma-4-26b-a4b-it",
+  "temperature": 0.7,
+  "max_tokens": 8192,
   "guardian_mode": true,
   "watch_mode": false,
-  "max_tokens": 8192
+  "auto_apply": false
 }
 ```
 
@@ -473,26 +483,28 @@ pytest tests/test_watch_mode.py -q
 
 ## ⚠️ Limitations
 
-> **Development Status:** This is a hackathon submission. These limitations are planned for future releases.
+> **Development Status:** Active development. Contributions welcome.
 
-- 🔄 Watch mode is experimental and may require manual review
+- 🔄 Watch mode monitors `~/.aria/last_fail.json` — works across sessions via shell hooks
 - 🌐 Internet connection required for AI features (knowledge base works offline)
 - 📱 Optimized primarily for Termux on Android
-- 🤔 Some auto-fix suggestions require manual verification
+- 🤔 Some auto-fix suggestions require manual verification before applying
 
 ---
 
 ## 📦 Dependencies
 
-| Package | Purpose |
-|---------|---------|
-| `google-generativeai` | Google provider support |
-| `rich` | Rich terminal formatting & UI |
-| `click` | CLI command interface |
-| `pydantic` | Data validation & models |
-| `python-dotenv` | Environment variable management |
+| Package | Purpose | Required? |
+|---------|---------|:---------:|
+| `rich` | Terminal formatting, syntax highlighting & UI | **Yes** |
+| `google-generativeai` | Google AI Studio / Gemma provider | Optional (only for `google` provider) |
 
-See `requirements.txt` for versions and additional dependencies.
+> **Lightweight by design.** ARIA uses Python's standard library (`urllib`, `json`, `threading`) for HTTP, config, and concurrency. The only hard dependency is `rich` for the terminal UI. If you use the Google provider, install the optional package:
+> ```bash
+> pip install google-generativeai --break-system-packages
+> ```
+>
+> OpenRouter and NVIDIA NIM providers work with zero extra packages.
 
 ---
 
@@ -554,6 +566,7 @@ copies or substantial portions of the Software.
 - 📱 **Mobile-First**: Terminal UI optimized for small screens
 - 💾 **Offline Ready**: Fallback support without internet connection
 - 🔐 **Safety-Conscious**: Risk assessment before executing commands
+- 🪶 **Lightweight**: Single required dependency (`rich`), native stdlib networking
 
 ---
 
