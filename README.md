@@ -42,8 +42,8 @@ It can answer questions, diagnose errors, suggest fixes, and auto-repair broken 
 ## Demo
 
 
+https://github.com/user-attachments/assets/1795a534-37a9-4f81-b217-e13b95cb1836
 
-https://github.com/user-attachments/assets/0bdec9c0-fd24-4844-8c09-aea0cd376e34
 
 
 
