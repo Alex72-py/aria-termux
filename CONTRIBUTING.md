@@ -253,7 +253,6 @@ aria-termux/
 - **Documentation**: Improve guides and examples
 - **Testing**: Increase test coverage
 - **Platforms**: Test and fix issues on different Android versions
-- **Providers**: Make the Google provider work without `google-generativeai` (see [#2](https://github.com/Alex72-py/aria-termux/issues/2))
 
 ## Questions?
 

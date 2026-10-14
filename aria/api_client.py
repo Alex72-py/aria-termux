@@ -4,6 +4,7 @@ import json
 import logging
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
@@ -27,9 +28,10 @@ class APIConfig:
 
 
 class ProviderError(RuntimeError):
-    def __init__(self, message: str, retryable: bool = False):
+    def __init__(self, message: str, retryable: bool = False, status: Optional[int] = None):
         super().__init__(message)
         self.retryable = retryable
+        self.status = status
 
 
 class BaseProvider:
@@ -81,6 +83,130 @@ class GoogleProvider(BaseProvider):
             msg = str(e).lower()
             retryable = any(k in msg for k in ("timeout", "tempor", "429", "quota", "unavailable"))
             raise ProviderError(f"Google request failed: {e}", retryable=retryable) from e
+
+
+class GoogleRESTProvider(BaseProvider):
+    """Google AI Studio over plain HTTPS, stdlib only.
+
+    Used when `google-generativeai` isn't installed (it often can't be on
+    Termux). Talks to the same Gemini API the SDK wraps.
+    """
+
+    name = "google"
+    BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
+
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+
+    @staticmethod
+    def _error_message(body: str) -> str:
+        try:
+            msg = json.loads(body).get("error", {}).get("message")
+            if msg:
+                return str(msg)[:180]
+        except (ValueError, AttributeError):
+            pass
+        return body[:180]
+
+    def _request_json(
+        self,
+        method: str,
+        path: str,
+        payload: Optional[Dict[str, Any]] = None,
+        timeout: int = 60,
+    ) -> Dict[str, Any]:
+        url = f"{self.BASE_URL}{path}"
+        data = None if payload is None else json.dumps(payload).encode("utf-8")
+        # Key goes in a header, not the URL, so it can't leak into error messages or logs.
+        headers = {"x-goog-api-key": self.api_key, "Content-Type": "application/json"}
+        req = urllib.request.Request(url, method=method, data=data, headers=headers)
+
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                raw = resp.read().decode("utf-8", errors="replace")
+                return json.loads(raw)
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", errors="replace")
+            lowered = body.lower()
+            if e.code in (401, 403) or "api key not valid" in lowered or "api_key_invalid" in lowered:
+                raise ProviderError("google auth failed (invalid API key)", retryable=False, status=e.code)
+            if e.code == 404:
+                raise ProviderError("google model/API route unavailable", retryable=False, status=404)
+            if e.code == 429:
+                raise ProviderError("google rate limit reached", retryable=True, status=429)
+            if 500 <= e.code <= 599:
+                raise ProviderError(f"google provider downtime/server error ({e.code})", retryable=True, status=e.code)
+            raise ProviderError(
+                f"google HTTP {e.code}: {self._error_message(body)}", retryable=False, status=e.code
+            )
+        except urllib.error.URLError as e:
+            raise ProviderError(f"google network error: {e}", retryable=True) from e
+        except json.JSONDecodeError as e:
+            raise ProviderError(f"google returned malformed JSON: {e}", retryable=True) from e
+        except Exception as e:
+            raise ProviderError(f"google unexpected failure: {e}", retryable=True) from e
+
+    def list_models(self) -> List[str]:
+        models: List[str] = []
+        page_token = ""
+        for _ in range(10):  # hard cap on pagination
+            path = "/models?pageSize=1000"
+            if page_token:
+                path += "&pageToken=" + urllib.parse.quote(page_token, safe="")
+            data = self._request_json("GET", path)
+            for item in data.get("models", []):
+                name = item.get("name", "")
+                methods = item.get("supportedGenerationMethods")
+                if name and (methods is None or "generateContent" in methods):
+                    models.append(name.replace("models/", "", 1))
+            page_token = data.get("nextPageToken", "")
+            if not page_token:
+                break
+        if not models:
+            raise ProviderError("google returned no models", retryable=False)
+        return models
+
+    def generate(self, prompt: str, system_instruction: Optional[str], config: APIConfig) -> str:
+        model = config.model.strip()
+        if model.startswith("models/"):
+            model = model[len("models/"):]
+        path = f"/models/{urllib.parse.quote(model, safe='')}:generateContent"
+
+        payload: Dict[str, Any] = {
+            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": config.temperature,
+                "maxOutputTokens": config.max_tokens,
+            },
+        }
+        if system_instruction:
+            payload["systemInstruction"] = {"parts": [{"text": system_instruction}]}
+
+        try:
+            data = self._request_json("POST", path, payload=payload, timeout=config.timeout)
+        except ProviderError as e:
+            # Some models (e.g. Gemma) reject a separate system instruction;
+            # retry once with it folded into the prompt.
+            if system_instruction and e.status == 400 and "instruction" in str(e).lower():
+                payload.pop("systemInstruction")
+                payload["contents"][0]["parts"][0]["text"] = f"{system_instruction}\n\n{prompt}"
+                data = self._request_json("POST", path, payload=payload, timeout=config.timeout)
+            else:
+                raise
+        return self._extract_text(data)
+
+    @staticmethod
+    def _extract_text(data: Dict[str, Any]) -> str:
+        candidates = data.get("candidates") or []
+        if candidates:
+            parts = (candidates[0].get("content") or {}).get("parts") or []
+            text = "".join(p.get("text", "") for p in parts if not p.get("thought"))
+            if text:
+                return text
+        block = (data.get("promptFeedback") or {}).get("blockReason")
+        if block:
+            raise ProviderError(f"google blocked the prompt ({block})", retryable=False)
+        raise ProviderError("google returned an empty/malformed response", retryable=True)
 
 
 class OpenAICompatProvider(BaseProvider):
@@ -186,7 +312,8 @@ class APIClient:
             raise ValueError(f"No API key configured for provider '{p}'")
         try:
             if p == "google":
-                self._provider = GoogleProvider(key)
+                # Prefer the SDK when present; otherwise talk to the API directly.
+                self._provider = GoogleProvider(key) if genai is not None else GoogleRESTProvider(key)
             elif p == "openrouter":
                 self._provider = OpenAICompatProvider(
                     name="OpenRouter",
@@ -205,6 +332,7 @@ class APIClient:
             logger.info(f"API provider initialized: {p} model={self.config.model}")
         except ProviderError as e:
             self._provider = None
+            self.last_error = str(e)
             logger.error(f"API provider unavailable: {e}")
 
     def get_supported_providers(self) -> Dict[str, str]:
@@ -270,7 +398,7 @@ class APIClient:
         if not self._provider:
             return False, "No provider initialized"
         try:
-            if isinstance(self._provider, GoogleProvider):
+            if isinstance(self._provider, (GoogleProvider, GoogleRESTProvider)):
                 # Minimal call: list models (lightweight, requires valid key)
                 self._provider.list_models()
             else:
