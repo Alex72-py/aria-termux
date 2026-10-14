@@ -193,7 +193,7 @@ What should happen instead.
 - OS: [e.g. Termux, Ubuntu]
 - Python version: [e.g. 3.8, 3.11]
 - ARIA version: [e.g. 1.0.0]
-- Provider and model: [e.g. openrouter, gemma-4-31b-it]
+- Provider and model: [e.g. openrouter, <model name>]
 
 **Additional context**
 Any other relevant information.

@@ -215,7 +215,7 @@ result = command_system.execute(parsed)
 ### Google AI Studio API
 
 - **Base URL**: `https://generativelanguage.googleapis.com/v1beta`
-- **Models**: gemma-4-2b-it, gemma-4-4b-it, gemma-4-26b-a4b-it, gemma-4-31b-it
+- **Models**: discovered at runtime via the models endpoint
 - **Free Tier**: 15 requests/minute, 1500 requests/day
 - **Authentication**: API key in header
 

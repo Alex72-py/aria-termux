@@ -5,7 +5,6 @@
 [![Python](https://img.shields.io/badge/Python-89%25-3776ab?logo=python&logoColor=white)](https://python.org)
 [![Shell](https://img.shields.io/badge/Shell-11%25-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Google Gemma 4](https://img.shields.io/badge/Google%20Gemma-4-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
 
 **A terminal AI assistant that actually understands Termux.**
 
@@ -15,10 +14,9 @@
 
 ## Status
 
-ARIA started as an entry in the Google Gemma 4 Challenge. The challenge is over, and the project carries on as a regular open-source tool. It's built and maintained by one person, so work is driven by [issues](https://github.com/Alex72-py/aria-termux/issues) and pull requests rather than a deadline.
+ARIA was originally built for the Google Gemma 4 Challenge ([write-up](https://dev.to/alex72py/i-built-aria-an-ai-terminal-co-pilot-for-termux-using-gemma-4-be4)). That's over, and it's now a regular open-source tool that works with any model its providers offer. It's built and maintained by one person, so work is driven by [issues](https://github.com/Alex72-py/aria-termux/issues) and pull requests rather than a deadline.
 
 - **Stable:** the core loop, slash commands, Guardian, watch mode, offline knowledge base, and three providers (Google AI Studio, OpenRouter, NVIDIA NIM).
-- **Original write-up:** [I built ARIA, an AI terminal co-pilot for Termux, using Gemma 4](https://dev.to/alex72py/i-built-aria-an-ai-terminal-co-pilot-for-termux-using-gemma-4-be4)
 
 ---
 
@@ -81,7 +79,7 @@ On first launch, ARIA detects there's no config and walks you through setup:
 ```
 Choose provider [google/openrouter/nvidia_nim]: google
 Enter API key: ••••••••••••••
-Enter model [gemma-4-26b-a4b-it]:
+Enter model (press Enter for the default):
 Enable Guardian mode? [y/n]: y
 ```
 
@@ -129,15 +127,7 @@ Enable `/watch`, then work in another Termux session. When a command fails there
 | `openrouter` | openrouter.ai | API key from dashboard |
 | `nvidia_nim` | integrate.api.nvidia.com | API key from build.nvidia.com |
 
-ARIA auto-discovers available models from whichever provider you're using.
-
-```
-Gemma 4 family (Google):
-├── gemma-4-2b-it
-├── gemma-4-4b-it
-├── gemma-4-26b-a4b-it
-└── gemma-4-31b-it
-```
+ARIA auto-discovers available models from whichever provider you're using. Run `/model list` to see them and `/model set <name>` to switch.
 
 ---
 
@@ -190,7 +180,7 @@ Stored at `~/.aria/config.json`:
     "openrouter": "...",
     "nvidia_nim": "..."
   },
-  "model": "gemma-4-26b-a4b-it",
+  "model": "your-model-name",
   "temperature": 0.7,
   "max_tokens": 8192,
   "guardian_mode": true,
@@ -203,7 +193,7 @@ You can also override with env vars:
 ```bash
 export ARIA_API_KEY="..."
 export ARIA_PROVIDER="openrouter"
-export ARIA_MODEL="gemma-4-31b-it"
+export ARIA_MODEL="your-model-name"
 ```
 
 ---
@@ -259,8 +249,6 @@ MIT. See [LICENSE](LICENSE).
 ---
 
 <div align="center">
-
-Originally built for the Google Gemma 4 Challenge.
 
 [![Stars](https://img.shields.io/github/stars/Alex72-py/aria-termux?style=social)](https://github.com/Alex72-py/aria-termux)
 [![GitHub](https://img.shields.io/badge/GitHub-Alex72--py-181717?logo=github)](https://github.com/Alex72-py)
