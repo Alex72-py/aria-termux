@@ -10,8 +10,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="aria-agent",
     version="1.0.0",
-    author="ARIA Development Team",
-    author_email="dev@aria-agent.dev",
+    author="Alex72-py",
     description="Terminal-native AI co-pilot for Termux/Android development",
     long_description=long_description,
     long_description_content_type="text/markdown",
