@@ -13,11 +13,21 @@
 
 ---
 
+## Status
+
+ARIA started as an entry in the Google Gemma 4 Challenge. The challenge is over, and the project carries on as a regular open-source tool. It's built and maintained by one person, so work is driven by [issues](https://github.com/Alex72-py/aria-termux/issues) and pull requests rather than a deadline.
+
+- **Stable:** the core loop, slash commands, Guardian, watch mode, offline knowledge base, and three providers (Google AI Studio, OpenRouter, NVIDIA NIM).
+- **Known problem:** the `google` provider needs the optional `google-generativeai` package, which doesn't install on some Termux setups. See [Known limitations](#known-limitations).
+- **Original write-up:** [I built ARIA, an AI terminal co-pilot for Termux, using Gemma 4](https://dev.to/alex72py/i-built-aria-an-ai-terminal-co-pilot-for-termux-using-gemma-4-be4)
+
+---
+
 ## What is this?
 
 ARIA is an AI assistant that lives in your terminal. It knows about Termux, Android filesystem quirks, proot containers, clang-not-gcc, and all the weird stuff you deal with when developing on a phone.
 
-It can answer questions, diagnose errors, suggest fixes, and auto-repair broken installs — all from a slash-command interface inside Termux.
+It can answer questions, diagnose errors, suggest fixes, and auto-repair broken installs, all from a slash-command interface inside Termux.
 
 **It's lightweight.** One dependency (`rich`). Everything else is stdlib. No bloated frameworks.
 
@@ -41,11 +51,7 @@ It can answer questions, diagnose errors, suggest fixes, and auto-repair broken 
 
 ## Demo
 
-
 https://github.com/user-attachments/assets/1795a534-37a9-4f81-b217-e13b95cb1836
-
-
-
 
 ---
 
@@ -62,12 +68,12 @@ pip install -r requirements.txt --break-system-packages
 python run_aria.py
 ```
 
-That's it. If you want to use the Google provider specifically, also run:
+To use the Google provider, also run:
 ```bash
 pip install google-generativeai --break-system-packages
 ```
 
-OpenRouter and NVIDIA NIM work out of the box — no extra packages.
+If that package won't install on your device, use OpenRouter or NVIDIA NIM instead. Both work with no extra packages.
 
 ---
 
@@ -153,7 +159,9 @@ aria/
 └── ui.py            — Rich terminal output, spinners, formatting
 ```
 
-The API layer uses Python's `urllib` directly — no `requests`, no `httpx`, no heavy HTTP libs. Provider switching is just changing which base URL and auth header gets used.
+The API layer uses Python's `urllib` directly. No `requests`, no `httpx`, no heavy HTTP libs. Provider switching is just changing which base URL and auth header gets used.
+
+For the full design, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ---
 
@@ -210,41 +218,32 @@ export ARIA_MODEL="gemma-4-31b-it"
 | `rich` | Terminal UI, syntax highlighting, spinners | Yes |
 | `google-generativeai` | Google provider only | No |
 
-Everything else — HTTP, JSON, threading, config — is stdlib. OpenRouter and NVIDIA NIM need zero extra packages.
+Everything else (HTTP, JSON, threading, config) is stdlib. OpenRouter and NVIDIA NIM need zero extra packages.
 
 ---
 
 ## Testing
 
 ```bash
-pytest -q          # 34 tests, all pass
+pytest -q          # 34 tests
 pytest -v          # verbose
 ```
 
 ---
 
-## What changed recently
+## Known limitations
 
-- Fixed the stuck spinner (model responses now terminate the animation properly)
-- First-run auto-detects missing config and launches setup wizard
-- API keys get validated on save (real auth check, not just endpoint ping)
-- Removed streaming mode — non-stream is more reliable on mobile connections
-- `google-generativeai` is now optional, not required
-- Fixed `install.sh` hardcoding wrong directory name
-- Config schema aligned between installer and runtime
-
----
-
-## Limitations
-
-- Watch mode works via file polling — it's not instant, but it's reliable
-- Needs internet for AI features (knowledge base works offline)
-- Built for Termux on Android — works on Linux too, but that's not the focus
-- Auto-fix suggestions should be reviewed before applying
+- **Google provider on Termux:** the `google` provider requires `google-generativeai`, and on some Termux setups it can't be installed. When that happens, `/model list` returns nothing and `/ask` fails. Use `openrouter` or `nvidia_nim` until this is fixed. Tracked in [#2](https://github.com/Alex72-py/aria-termux/issues/2).
+- Watch mode works via file polling. It's not instant, but it's reliable.
+- AI features need internet. The knowledge base (`/kb`) works offline.
+- Built for Termux on Android. It runs on Linux too, but that's not the focus.
+- Auto-fix suggestions should be reviewed before applying.
 
 ---
 
 ## Contributing
+
+Issues and PRs are welcome. Bug reports are the most useful thing right now, especially ones that include your Termux version, Android version, Python version, and which provider you were using.
 
 ```bash
 git checkout -b feature/my-thing
@@ -253,7 +252,7 @@ git commit -m "what you did"
 git push origin feature/my-thing
 ```
 
-Keep it simple. PEP 8. Tests for new features. Don't add dependencies unless absolutely necessary.
+Keep it simple. PEP 8. Tests for new features. Don't add dependencies unless absolutely necessary. See [CONTRIBUTING.md](CONTRIBUTING.md) for more.
 
 ---
 
@@ -265,7 +264,7 @@ MIT. See [LICENSE](LICENSE).
 
 <div align="center">
 
-**Submitted for the Google Gemma 4 Challenge**
+Originally built for the Google Gemma 4 Challenge.
 
 [![Stars](https://img.shields.io/github/stars/Alex72-py/aria-termux?style=social)](https://github.com/Alex72-py/aria-termux)
 [![GitHub](https://img.shields.io/badge/GitHub-Alex72--py-181717?logo=github)](https://github.com/Alex72-py)
