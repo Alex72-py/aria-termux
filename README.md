@@ -18,7 +18,6 @@
 ARIA started as an entry in the Google Gemma 4 Challenge. The challenge is over, and the project carries on as a regular open-source tool. It's built and maintained by one person, so work is driven by [issues](https://github.com/Alex72-py/aria-termux/issues) and pull requests rather than a deadline.
 
 - **Stable:** the core loop, slash commands, Guardian, watch mode, offline knowledge base, and three providers (Google AI Studio, OpenRouter, NVIDIA NIM).
-- **Known problem:** the `google` provider needs the optional `google-generativeai` package, which doesn't install on some Termux setups. See [Known limitations](#known-limitations).
 - **Original write-up:** [I built ARIA, an AI terminal co-pilot for Termux, using Gemma 4](https://dev.to/alex72py/i-built-aria-an-ai-terminal-co-pilot-for-termux-using-gemma-4-be4)
 
 ---
@@ -68,12 +67,10 @@ pip install -r requirements.txt --break-system-packages
 python run_aria.py
 ```
 
-To use the Google provider, also run:
+The Google provider works with no extra packages. If `google-generativeai` is installed, ARIA uses it. If not, ARIA talks to the Google API directly over HTTPS. You only need the package if you specifically want the SDK path:
 ```bash
 pip install google-generativeai --break-system-packages
 ```
-
-If that package won't install on your device, use OpenRouter or NVIDIA NIM instead. Both work with no extra packages.
 
 ---
 
@@ -216,16 +213,16 @@ export ARIA_MODEL="gemma-4-31b-it"
 | Package | Why | Required |
 |---------|-----|:--------:|
 | `rich` | Terminal UI, syntax highlighting, spinners | Yes |
-| `google-generativeai` | Google provider only | No |
+| `google-generativeai` | Optional SDK for the Google provider (ARIA falls back to plain HTTPS without it) | No |
 
-Everything else (HTTP, JSON, threading, config) is stdlib. OpenRouter and NVIDIA NIM need zero extra packages.
+Everything else (HTTP, JSON, threading, config) is stdlib. All three providers work with no extra packages.
 
 ---
 
 ## Testing
 
 ```bash
-pytest -q          # 34 tests
+pytest -q
 pytest -v          # verbose
 ```
 
@@ -233,7 +230,6 @@ pytest -v          # verbose
 
 ## Known limitations
 
-- **Google provider on Termux:** the `google` provider requires `google-generativeai`, and on some Termux setups it can't be installed. When that happens, `/model list` returns nothing and `/ask` fails. Use `openrouter` or `nvidia_nim` until this is fixed. Tracked in [#2](https://github.com/Alex72-py/aria-termux/issues/2).
 - Watch mode works via file polling. It's not instant, but it's reliable.
 - AI features need internet. The knowledge base (`/kb`) works offline.
 - Built for Termux on Android. It runs on Linux too, but that's not the focus.

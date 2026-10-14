@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Google provider falls back to plain HTTPS (stdlib `urllib`) when `google-generativeai` isn't installed, so it works on Termux setups where the SDK won't install. The SDK is still used when present (2026-10-14)
+- When a provider can't initialize, the reason is now reported instead of `None` (2026-10-14)
 - Trimmed dependencies: `rich` is the only required package, and `google-generativeai` is optional (Google provider only) (2026-05-28)
 - Config schema aligned between the installer and the runtime (2026-05-28)
 - `install.sh` no longer hardcodes the wrong directory name (2026-05-28)
@@ -23,16 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Google provider was unusable without `google-generativeai`: `/model list` returned nothing and `/ask` failed ([#2](https://github.com/Alex72-py/aria-termux/issues/2)) (2026-10-14)
 - Stuck spinner and text wrapping on small screens (2026-05-28)
 - Blocking confirmation prompts removed from threaded commands (2026-05-28)
 
 ### Removed
 
 - Streaming mode, because non-streaming is more reliable on mobile connections (2026-05-28)
-
-### Known issues
-
-- The `google` provider is unusable when `google-generativeai` can't be installed (e.g. some Termux setups): [#2](https://github.com/Alex72-py/aria-termux/issues/2)
 
 ## [1.0.0] - 2026-05-24
 
