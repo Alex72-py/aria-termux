@@ -20,14 +20,15 @@ Thank you for your interest in contributing to ARIA! This document provides guid
 
 ```bash
 # Clone repository
-git clone https://github.com/your-username/aria-agent.git
-cd aria-agent
+git clone https://github.com/Alex72-py/aria-termux.git
+cd aria-termux
 
 # Create virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install in development mode
+pip install -r requirements.txt
 pip install -e .
 pip install pytest pytest-cov
 
@@ -192,6 +193,7 @@ What should happen instead.
 - OS: [e.g. Termux, Ubuntu]
 - Python version: [e.g. 3.8, 3.11]
 - ARIA version: [e.g. 1.0.0]
+- Provider and model: [e.g. openrouter, gemma-4-31b-it]
 
 **Additional context**
 Any other relevant information.
@@ -218,24 +220,28 @@ Any other relevant information.
 ## Project Structure
 
 ```
-aria-agent/
-├── aria/                 # Main package
+aria-termux/
+├── aria/                  # Main package
 │   ├── __init__.py
-│   ├── main.py          # Main application
-│   ├── cli.py           # CLI interface
-│   ├── api_client.py    # API integration
-│   ├── command_system.py # Command parsing
-│   ├── config.py        # Configuration
-│   ├── guardian.py      # Safety layer
-│   ├── knowledge_base.py # KB system
-│   ├── watch_mode.py    # Watch mode
-│   ├── ui.py            # UI components
-│   └── utils.py         # Utilities
-├── tests/               # Test suite
-├── setup.py             # Package setup
-├── README.md            # User documentation
-├── CONTRIBUTING.md      # This file
-└── LICENSE              # MIT License
+│   ├── main.py            # Main loop, command dispatch, setup wizard
+│   ├── api_client.py      # Provider abstraction (Google, OpenRouter, NVIDIA NIM)
+│   ├── command_system.py  # Slash command registry and parsing
+│   ├── config.py          # JSON config (~/.aria/config.json)
+│   ├── guardian.py        # Risk scoring and confirmation prompts
+│   ├── knowledge_base.py  # Offline Termux troubleshooting data
+│   ├── repair_agent.py    # Local-first fix planning
+│   ├── watch_mode.py      # Cross-session error capture
+│   ├── ui.py              # Terminal UI components
+│   └── utils.py           # Utilities
+├── tests/                 # Test suite
+├── install.sh             # Installer
+├── run_aria.py            # Run without installing
+├── setup.py               # Package setup
+├── ARCHITECTURE.md        # Design overview
+├── CHANGELOG.md           # Notable changes
+├── README.md              # User documentation
+├── CONTRIBUTING.md        # This file
+└── LICENSE                # MIT License
 ```
 
 ## Areas for Contribution
@@ -247,12 +253,13 @@ aria-agent/
 - **Documentation**: Improve guides and examples
 - **Testing**: Increase test coverage
 - **Platforms**: Test and fix issues on different Android versions
+- **Providers**: Make the Google provider work without `google-generativeai` (see [#2](https://github.com/Alex72-py/aria-termux/issues/2))
 
 ## Questions?
 
-- Check existing issues and discussions
-- Ask in GitHub Discussions
-- Review documentation and code comments
+- Check [existing issues](https://github.com/Alex72-py/aria-termux/issues)
+- Open a new issue if yours isn't covered
+- Review ARCHITECTURE.md and the code comments
 
 ## License
 

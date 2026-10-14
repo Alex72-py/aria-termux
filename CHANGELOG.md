@@ -5,6 +5,35 @@ All notable changes to ARIA will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Multi-provider support: Google AI Studio, OpenRouter, and NVIDIA NIM (2026-05-21)
+- Animated logo and a local-first auto-repair agent (`repair_agent.py`) (2026-05-21)
+- API keys are validated on save with a real auth check, not just an endpoint ping (2026-05-28)
+
+### Changed
+
+- Trimmed dependencies: `rich` is the only required package, and `google-generativeai` is optional (Google provider only) (2026-05-28)
+- Config schema aligned between the installer and the runtime (2026-05-28)
+- `install.sh` no longer hardcodes the wrong directory name (2026-05-28)
+- README rewritten twice: direct tone (2026-05-28), then for the post-hackathon phase (2026-10-14)
+- `CONTRIBUTING.md` and package metadata corrected to point at this repository (2026-10-14)
+
+### Fixed
+
+- Stuck spinner and text wrapping on small screens (2026-05-28)
+- Blocking confirmation prompts removed from threaded commands (2026-05-28)
+
+### Removed
+
+- Streaming mode, because non-streaming is more reliable on mobile connections (2026-05-28)
+
+### Known issues
+
+- The `google` provider is unusable when `google-generativeai` can't be installed (e.g. some Termux setups): [#2](https://github.com/Alex72-py/aria-termux/issues/2)
+
 ## [1.0.0] - 2026-05-24
 
 ### Added
@@ -108,32 +137,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some Android versions may have permission restrictions
 - API rate limits apply (free tier: 15 req/min, 1500 req/day)
 
-## Future Roadmap
+## Roadmap
 
-### Version 1.1.0 (Planned)
-
-- [ ] Multi-language support
-- [ ] Custom command plugins
-- [ ] Enhanced watch mode with real-time suggestions
-- [ ] Integration with GitHub for code context
-- [ ] Caching system for faster responses
-- [ ] Extended knowledge base (200+ entries)
-
-### Version 1.2.0 (Planned)
-
-- [ ] Voice input support
-- [ ] Integration with popular Termux tools
-- [ ] Performance optimizations
-- [ ] Mobile app companion
-- [ ] Cloud sync for configuration
-
-### Version 2.0.0 (Planned)
-
-- [ ] Multi-agent architecture
-- [ ] Advanced reasoning capabilities
-- [ ] Custom model support
-- [ ] Enterprise features
-- [ ] Team collaboration features
+The planned-features list that used to live here was written during the hackathon and is out of date. Current work is tracked in [issues](https://github.com/Alex72-py/aria-termux/issues).
 
 ---
 
